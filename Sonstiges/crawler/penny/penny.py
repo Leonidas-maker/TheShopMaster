@@ -25,11 +25,15 @@ categories = data[0]["categories"]
 #TODO productData need to be parsed
 for category in categories:
     for article in category["offerTiles"]:
-        product_name = article.get("title")
-        if product_name:
-            product_price = article.get("price")
-            product_quantity = article.get("quantity")
-            product_originalPrice = article.get("originalPrice")
-            product_originalPriceType = article.get("originalPriceType")
-            product =(product_name, product_price, product_quantity, product_originalPrice, product_originalPriceType)  
+        productName = article.get("title")
+        if productName:
+            productType = article.get("type")
+            productPrice = article.get("price")
+            productBasePrice = article.get("basePrice")
+            productQuantity = article.get("quantity")
+            productDiscountPercentage = article.get("discountPercentage")
+            productDiscount = article.get("discount")
+            productOriginalPrice = article.get("originalPrice")
+            productOriginalPriceType = article.get("originalPriceType")
+            product = (productName, productPrice, productBasePrice, productType, productQuantity, productDiscount, productDiscountPercentage, productOriginalPrice, productOriginalPriceType)  
             print(product)
