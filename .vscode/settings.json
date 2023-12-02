@@ -1,0 +1,5 @@
+{
+    "python.analysis.extraPaths": [
+        "./Server/utils/scraper/custom_lib"
+    ]
+}

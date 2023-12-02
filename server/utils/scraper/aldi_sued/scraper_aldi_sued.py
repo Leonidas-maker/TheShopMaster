@@ -1,42 +1,26 @@
-import mysql.connector
+import sys
+from os import path as osPath
+from platform import system as systemType
+if systemType() == "Windows":
+    mainFolderPath = f"{osPath.dirname(osPath.abspath(sys.argv[0]))}\\.."
+    sys.path.append(f"{mainFolderPath}\\custom_lib")
+else:
+    mainFolderPath = f"{osPath.dirname(osPath.abspath(sys.argv[0]))}/.."
+    sys.path.append(f"{mainFolderPath}/custom_lib")
+
 from bs4 import BeautifulSoup
 import requests
-
-def connectDB():
-    # Establish a connection to the MariaDB database
-    connection = mysql.connector.connect(
-        host="pterodactyl.schuetz-andreas.dev",
-        user="Schuetze1000",
-        password="Xx4ruZGg3P*rptg*t*P7v",
-        database="theshopmaster"
-    )
-    return connection.cursor(), connection
-
-def createQuerry(category, productTitle, productSubtitle, productPrices, productImages, productAldiSuedIDs, cursor):
-    # Build query per category
-    insert_query = f'INSERT IGNORE INTO aldi_sued (product_id, product_category, product_title, product_subtitle, product_price, product_image) VALUES '
-    for x in range(len(productTitle)):
-        insert_query += f'("{productAldiSuedIDs[x]}", "{category}", "{productTitle[x]}", "{productSubtitle[x]}", "{productPrices[x]}", "{productImages[x]}")'
-        if x != len(productTitle) - 1:
-            insert_query += ',\n'
-        else:
-            insert_query += ';'
-    cursor.execute(insert_query)
-    connection.commit()
+from connector import main_db_connector 
     
-def getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_raw, productImages_raw, productAldiSuedIDs_raw, cursor):
-    # Create product information lists
-    productTitle = []
-    productPrices = []
-    productSubtitle = []
-    productImages = []
-    productAldiSuedIDs = []
-    
+def getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_raw, productImages_raw, productAldiSuedIDs_raw):
+    # Create product information list
+    productInformations = []
+
     # Save product information to lists
     for x in range(len(productTitle_raw)):
         if productTitle_raw[x]:
             # Get product title
-            productTitle.append(productTitle_raw[x].text.strip())
+            productTitle = productTitle_raw[x].text.strip()
 
             # Get product price
             helperTMP = productPrices_raw[x].text.strip().replace("€ ", "") 
@@ -44,24 +28,29 @@ def getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_ra
                 helperTMP += "€"
             else:
                 helperTMP = "variabel"
-            productPrices.append(helperTMP)
+            productPrice = helperTMP
 
             # Get product subtitle
-            productSubtitle.append(productSubtitle_raw[x].text.replace(" ", "").replace("\n", ""))
+            productSubtitle = productSubtitle_raw[x].text.replace(" ", "").replace("\n", "")
 
             # Get product images
             helperTMP = productImages_raw[x].find(class_="at-product-images_img")
             if (helperTMP):
-                productImages.append(helperTMP["data-src"].strip())
+                productImage = helperTMP["data-src"].strip()
             else:
-                productImages.append("n/a")
+                productImage = "n/a"
             
             # Get AldiSuedIDs
-            productAldiSuedIDs.append(productAldiSuedIDs_raw[x]["data-productid"].strip())
-            createQuerry(category, productTitle, productSubtitle, productPrices, productImages, productAldiSuedIDs, cursor)
+            productAldiSuedID = productAldiSuedIDs_raw[x]["data-productid"].strip()
+
+            productInformations.append((productAldiSuedID, category, productTitle, productSubtitle, productPrice, productImage))
     #--end--main
 
-def scraper(cursor):
+    # Create DB-Querry
+    __database__.buildExecuteQuerry("aldi_sued", productInformations)
+    
+
+def scaper():
     # Header for Anti-Bot Protection
     header = {
         "authority": "www.aldi-sued.de",
@@ -105,13 +94,13 @@ def scraper(cursor):
             productImages_raw = soup.find_all(class_="plp_product__img")
             productAldiSuedIDs_raw = soup.find_all(class_="at-allproductteaserbox_grpl")
 
-            getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_raw, productImages_raw, productAldiSuedIDs_raw, cursor)
+            getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_raw, productImages_raw, productAldiSuedIDs_raw)
             page += 1
     #--end--categories
 
 if __name__ == "__main__":
-    cursor, connection = connectDB()
-    scraper(cursor)
-    # Commit products to database and close connection
-    cursor.close()
-    connection.close()
+    global __database__
+    __database__ = main_db_connector(f"{mainFolderPath}/config.ini")
+    __database__.connectDB()
+    scaper()
+    __database__.commitAndClose()
