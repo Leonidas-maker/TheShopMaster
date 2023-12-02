@@ -5,8 +5,9 @@ import { Text, View } from "react-native";
 import Registration from "../registration/registration";
 import Login from "../login/login";
 import Dashboard from "../dashboard/dashboard";
+import LoadingSVG from "../../components/svg/loadingSVG";
 
-const Loading = (props) => {
+const Loading = (props:any) => {
     const { navigation } = props;
 
     const { t } = useTranslation();
@@ -19,7 +20,8 @@ This will be the initial page where the app checks if you are already logged in 
 This is just a menu to test some basic functions: 
 
 `}
-<Text onPress={() => navigation.navigate(Registration)}>Registration</Text>
+<LoadingSVG />
+<button type="button" onClick={() => navigation.navigate(Registration)} className="text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Registration</button>
 {`
 
 `}
