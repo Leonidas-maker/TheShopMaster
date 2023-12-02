@@ -1,13 +1,4 @@
-import sys
-from os import path as osPath
-from platform import system as systemType
-if systemType() == "Windows":
-    mainFolderPath = f"{osPath.dirname(osPath.abspath(sys.argv[0]))}\\.."
-    sys.path.append(f"{mainFolderPath}\\custom_lib")
-else:
-    mainFolderPath = f"{osPath.dirname(osPath.abspath(sys.argv[0]))}/.."
-    sys.path.append(f"{mainFolderPath}/custom_lib")
-
+import mysql.connector
 from bs4 import BeautifulSoup
 import requests
 from connector import main_db_connector 
@@ -43,7 +34,7 @@ def getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_ra
             # Get AldiSuedIDs
             productAldiSuedID = productAldiSuedIDs_raw[x]["data-productid"].strip()
 
-            productInformations.append((productAldiSuedID, category, productTitle, productSubtitle, productPrice, productImage))
+            productInformations.append((productAldiSuedID, category, productTitle, productPrice, "", productSubtitle, "", productImage))
     #--end--main
 
     # Create DB-Querry
@@ -100,7 +91,7 @@ def scaper():
 
 if __name__ == "__main__":
     global __database__
-    __database__ = main_db_connector(f"{mainFolderPath}/config.ini")
+    __database__ = main_db_connector()
     __database__.connectDB()
     scaper()
     __database__.commitAndClose()
