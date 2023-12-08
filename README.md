@@ -12,6 +12,7 @@ The plan is to include the following shops in the app:
 - Edeka
 - Norma
 - Netto
+- Kaufland
 
 We are still in development, so you can follow the progress of this application being built by us. 
 
