@@ -39,10 +39,11 @@ class main_db_connector:
                 self.connectDB()
             
         insert_query = f'INSERT IGNORE INTO {tabbleName} (product_ean, product_category, product_name, product_currentPrice, product_regularPrice, \
-                        product_basePrice, product_baseUnit, product_vendor, product_image) VALUES '
+                        product_hasDiscount, product_discountedUntil, product_basePrice, product_baseUnit, product_vendor, product_image) VALUES '
         counter = 0
         for information in informations:
-            insert_query += f'("{information[0]}", "{information[1]}", "{information[2]}", "{information[3]}", "{information[4]}", "{information[5]}", "{information[6]}", "{information[7]}", "{information[8]}")'
+            insert_query += f'("{information[0]}", "{information[1]}", "{information[2]}", "{information[3]}", "{information[4]}", \
+                            "{int(information[5])}", "{information[6]}", "{information[7]}", "{information[8]}", "{information[9]}", "{information[10]}")'
 
             # If one Article remains end querry
             if counter < len(informations) - 1:

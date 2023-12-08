@@ -34,7 +34,8 @@ def getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_ra
             # Get AldiSuedIDs
             productAldiSuedID = productAldiSuedIDs_raw[x]["data-productid"].strip()
 
-            productInformations.append((productAldiSuedID, category, productTitle, productPrice, "", productSubtitle, "", productImage))
+            #! Check for discount
+            productInformations.append((productAldiSuedID, category, productTitle, productPrice, "", False, "", productSubtitle, "", productImage))
     #--end--main
 
     # Create DB-Querry
@@ -84,7 +85,7 @@ def scaper():
             productSubtitle_raw = soup.find_all(class_="additional-product-info")
             productImages_raw = soup.find_all(class_="plp_product__img")
             productAldiSuedIDs_raw = soup.find_all(class_="at-allproductteaserbox_grpl")
-
+            
             getProduct(category, productTitle_raw, productPrices_raw, productSubtitle_raw, productImages_raw, productAldiSuedIDs_raw)
             page += 1
     #--end--categories
