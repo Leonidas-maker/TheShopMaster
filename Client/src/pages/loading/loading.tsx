@@ -28,7 +28,10 @@ This is just a menu to test some basic functions:
 
 `}
 				<LoadingSVG />
-				<StyledPressable className={"text-white"} onPress={() => navigation.navigate(Registration)}>
+				<StyledPressable
+					className={`font-bold text-white`}
+					onPress={() => navigation.navigate(Registration)}
+				>
 					Registration
 				</StyledPressable>
 
