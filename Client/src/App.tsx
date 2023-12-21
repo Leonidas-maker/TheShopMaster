@@ -1,3 +1,4 @@
+/// <reference types="nativewind/types" />
 import 'react-native-gesture-handler';
 import React from 'react';
 import '../public/index.css';
