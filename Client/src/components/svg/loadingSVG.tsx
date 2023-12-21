@@ -1,8 +1,9 @@
 import * as React from "react"
 import Svg, { Path } from "react-native-svg"
+import { View } from "react-native"
 
 const LoadingSVG = () => (
-  <div role="status">
+  <View role="status">
     <Svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
@@ -21,6 +22,6 @@ const LoadingSVG = () => (
         d="M93.968 39.04c2.425-.636 3.894-3.128 3.04-5.486A50 50 0 0 0 41.735 1.279c-2.474.414-3.922 2.919-3.285 5.344.637 2.426 3.12 3.849 5.6 3.484a40.916 40.916 0 0 1 44.131 25.769c.902 2.34 3.361 3.802 5.787 3.165Z"
       />
     </Svg>
-  </div>
+  </View>
 )
 export default LoadingSVG
