@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View, Pressable, ActivityIndicator, StyleSheet } from "react-native";
-import { styled } from "nativewind";
+import { styled, useColorScheme } from "nativewind";
 
 import Dashboard from "../dashboard/dashboard";
 
@@ -15,10 +15,24 @@ function Login(props: any) {
 
     const { t } = useTranslation();
 
+	const { colorScheme, toggleColorScheme } = useColorScheme();
+
     return (
 		<StyledView className={`flex h-screen items-center justify-center`}>
+			<StyledText className={`text-black font-bold text-lg p-5`}>This is just a debug page at the moment</StyledText>
 			<StyledActivityIndicator className={`content-center`} size="large" />
 			<StyledText className={`text-black font-bold p-5`}>Loading...</StyledText>
+			<StyledPressable
+				onPress={toggleColorScheme}
+				className={`${colorScheme === 'dark' ? 'bg-slate-800' : 'bg-gray-800'}`}
+			>
+				<StyledText
+				selectable={false}
+				className={`${colorScheme === 'dark' ? 'text-white' : 'text-black'}`}
+				>
+				{`Try clicking me! ${colorScheme === "dark" ? "🌙" : "🌞"}`}
+				</StyledText>
+			</StyledPressable>
 			<StyledPressable className={`font-bold text-white bg-red-500 rounded-md p-2`}>
 						<Text>New Stack</Text>
 					</StyledPressable>
