@@ -1,9 +1,12 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Registration from '../../pages/registration/registration';
-import Login from '../../pages/login/login';
-import Dashboard from '../../pages/dashboard/dashboard';
-import Settings from '../../pages/settings/settings';
+import Registration from '../../screens/registration/registration';
+import Login from '../../screens/login/login';
+import Dashboard from '../../screens/dashboard/dashboard';
+import Settings from '../../screens/settings/settings';
+import Overview from '../../screens/overview/overview';
 import { StatusBar } from 'react-native';
+
+import UserSVG from '../../../public/images/svg/userSVG';
 
 const Tab = createBottomTabNavigator();
 
@@ -29,6 +32,9 @@ function HomeBottomTabs() {
                     component={Dashboard} 
                     options={{
                         headerTitle: 'TheShopMaster',
+                        tabBarIcon: ({ color, size }) => (
+                            <UserSVG width={size} height={size} fill={color} />
+                        )
                     }}
                 />
                 <Tab.Screen 
@@ -50,6 +56,13 @@ function HomeBottomTabs() {
                     component={Settings} 
                     options={{
                         headerTitle: 'TheShopMaster',
+                    }}
+                />
+                <Tab.Screen 
+                    name="Overview" 
+                    component={Overview} 
+                    options={{
+                        headerTitle: 'Page navigator',
                     }}
                 />
             </Tab.Navigator>
