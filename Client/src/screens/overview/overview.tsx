@@ -13,7 +13,7 @@ import ShoppingList from "../shoppingList/shoppingList";
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledTouchableOpacity = styled(TouchableOpacity);
-//! Have to make own navigator for this
+
 function Overview(props: any) {
     const { navigation } = props;
     const { t } = useTranslation();

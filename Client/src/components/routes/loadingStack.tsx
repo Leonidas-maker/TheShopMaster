@@ -1,8 +1,8 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import Loading from '../../screens/loading/loading';
 import HomeBottomTabs from './homeBottomTabs';
-import ShoppingList from '../../screens/shoppingList/shoppingList';
 import { StatusBar } from 'react-native';
+import OverviewStack from './overviewStack';
 
 const Stack = createStackNavigator();
 
@@ -18,7 +18,7 @@ function LoadingStack() {
       >
         <Stack.Screen name="Loading" component={Loading} />
         <Stack.Screen name="HomeBottomTabs" component={HomeBottomTabs} />
-        <Stack.Screen name="ShoppingList" component={ShoppingList} />
+        <Stack.Screen name="OverviewStack" component={OverviewStack} />
       </Stack.Navigator>
     </>
   );

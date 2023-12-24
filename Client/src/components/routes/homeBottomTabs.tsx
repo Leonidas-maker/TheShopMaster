@@ -1,12 +1,18 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Registration from '../../screens/registration/registration';
-import Login from '../../screens/login/login';
-import Dashboard from '../../screens/dashboard/dashboard';
-import Settings from '../../screens/settings/settings';
-import Overview from '../../screens/overview/overview';
 import { StatusBar } from 'react-native';
 
 import UserSVG from '../../../public/images/svg/userSVG';
+import DashboardSVG from '../../../public/images/svg/dashboardSVG';
+import ScannerSVG from '../../../public/images/svg/scannerSVG';
+import SearchSVG from '../../../public/images/svg/searchSVG';
+import ShoppingCartSVG from '../../../public/images/svg/shoppingCartSVG';
+import SettingsSVG from '../../../public/images/svg/settingsSVG';
+
+import Dashboard from '../../screens/dashboard/dashboard';
+import OverviewStack from './overviewStack';
+import Scanner from '../../screens/scanner/scanner';
+import Search from '../../screens/search/search';
+import ShoppingList from '../../screens/shoppingList/shoppingList';
 
 const Tab = createBottomTabNavigator();
 
@@ -28,41 +34,53 @@ function HomeBottomTabs() {
                 }}
             >
                 <Tab.Screen 
-                    name="Dashboard" 
+                    name="Aktuelles" 
                     component={Dashboard} 
                     options={{
                         headerTitle: 'TheShopMaster',
                         tabBarIcon: ({ color, size }) => (
-                            <UserSVG width={size} height={size} fill={color} />
+                            <DashboardSVG width={size} height={size} fill={color} />
                         )
                     }}
                 />
                 <Tab.Screen 
-                    name="Login" 
-                    component={Login} 
+                    name="QR Code" 
+                    component={Scanner} 
                     options={{
                         headerTitle: 'TheShopMaster',
+                        tabBarIcon: ({ color, size }) => (
+                            <ScannerSVG width={size} height={size} fill={color} />
+                        )
                     }}
                 />
                 <Tab.Screen 
-                    name="Registration" 
-                    component={Registration} 
+                    name="Suche" 
+                    component={Search} 
                     options={{
                         headerTitle: 'TheShopMaster',
+                        tabBarIcon: ({ color, size }) => (
+                            <SearchSVG width={size} height={size} fill={color} />
+                        )
                     }}
                 />
                 <Tab.Screen 
-                    name="Settings" 
-                    component={Settings} 
+                    name="Einkaufswagen" 
+                    component={ShoppingList} 
                     options={{
                         headerTitle: 'TheShopMaster',
+                        tabBarIcon: ({ color, size }) => (
+                            <ShoppingCartSVG width={size} height={size} fill={color} />
+                        )
                     }}
                 />
                 <Tab.Screen 
-                    name="Overview" 
-                    component={Overview} 
+                    name="Einstellungen" 
+                    component={OverviewStack} 
                     options={{
                         headerTitle: 'Page navigator',
+                        tabBarIcon: ({ color, size }) => (
+                            <SettingsSVG width={size} height={size} fill={color} />
+                        )
                     }}
                 />
             </Tab.Navigator>
