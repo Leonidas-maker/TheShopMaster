@@ -1,18 +1,21 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'react-native';
 
-import UserSVG from '../../../public/images/svg/userSVG';
-import DashboardSVG from '../../../public/images/svg/dashboardSVG';
-import ScannerSVG from '../../../public/images/svg/scannerSVG';
-import SearchSVG from '../../../public/images/svg/searchSVG';
-import ShoppingCartSVG from '../../../public/images/svg/shoppingCartSVG';
-import SettingsSVG from '../../../public/images/svg/settingsSVG';
+import DashboardSVG from '../../../public/images/svg/navigatorIcons/inactive/dashboardSVG';
+import ScannerSVG from '../../../public/images/svg/navigatorIcons/inactive/scannerSVG';
+import SearchSVG from '../../../public/images/svg/navigatorIcons/inactive/searchSVG';
+import ShoppingCartSVG from '../../../public/images/svg/navigatorIcons/inactive/shoppingCartSVG';
+import SettingsSVG from '../../../public/images/svg/navigatorIcons/inactive/settingsSVG';
 
 import Dashboard from '../../screens/dashboard/dashboard';
 import OverviewStack from './overviewStack';
 import Scanner from '../../screens/scanner/scanner';
 import Search from '../../screens/search/search';
 import ShoppingList from '../../screens/shoppingList/shoppingList';
+import ActiveDashboardSVG from '../../../public/images/svg/navigatorIcons/active/activeDashboardSVG';
+import ActiveSearchSVG from '../../../public/images/svg/navigatorIcons/active/activeSearchSVG';
+import ActiveShoppingCartSVG from '../../../public/images/svg/navigatorIcons/active/activeShoppingCartSVG';
+import ActiveSettingsSVG from '../../../public/images/svg/navigatorIcons/active/activeSettingsSVG';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,9 +41,13 @@ function HomeBottomTabs() {
                     component={Dashboard} 
                     options={{
                         headerTitle: 'TheShopMaster',
-                        tabBarIcon: ({ color, size }) => (
-                            <DashboardSVG width={size} height={size} fill={color} />
-                        )
+                        tabBarIcon: ({ color, size, focused }) => {
+                            if (focused) {
+                                return <ActiveDashboardSVG width={size} height={size} fill={color} />;
+                            } else {
+                                return <DashboardSVG width={size} height={size} fill={color} />;
+                            }
+                        },
                     }}
                 />
                 <Tab.Screen 
@@ -58,9 +65,13 @@ function HomeBottomTabs() {
                     component={Search} 
                     options={{
                         headerTitle: 'TheShopMaster',
-                        tabBarIcon: ({ color, size }) => (
-                            <SearchSVG width={size} height={size} fill={color} />
-                        )
+                        tabBarIcon: ({ color, size, focused }) => {
+                            if (focused) {
+                                return <ActiveSearchSVG width={size} height={size} fill={color} />;
+                            } else {
+                                return <SearchSVG width={size} height={size} fill={color} />;
+                            }
+                        },
                     }}
                 />
                 <Tab.Screen 
@@ -68,9 +79,13 @@ function HomeBottomTabs() {
                     component={ShoppingList} 
                     options={{
                         headerTitle: 'TheShopMaster',
-                        tabBarIcon: ({ color, size }) => (
-                            <ShoppingCartSVG width={size} height={size} fill={color} />
-                        )
+                        tabBarIcon: ({ color, size, focused }) => {
+                            if (focused) {
+                                return <ActiveShoppingCartSVG width={size} height={size} fill={color} />;
+                            } else {
+                                return <ShoppingCartSVG width={size} height={size} fill={color} />;
+                            }
+                        },
                     }}
                 />
                 <Tab.Screen 
@@ -78,9 +93,14 @@ function HomeBottomTabs() {
                     component={OverviewStack} 
                     options={{
                         headerTitle: 'Page navigator',
-                        tabBarIcon: ({ color, size }) => (
-                            <SettingsSVG width={size} height={size} fill={color} />
-                        )
+                        headerShown: false,
+                        tabBarIcon: ({ color, size, focused }) => {
+                            if (focused) {
+                                return <ActiveSettingsSVG width={size} height={size} fill={color} />;
+                            } else {
+                                return <SettingsSVG width={size} height={size} fill={color} />;
+                            }
+                        },
                     }}
                 />
             </Tab.Navigator>
