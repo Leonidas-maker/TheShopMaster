@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { styled } from "nativewind";
 
 import Dashboard from "../dashboard/dashboard";
@@ -13,13 +13,14 @@ import ShoppingList from "../shoppingList/shoppingList";
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledScrollView = styled(ScrollView);
 
 function Overview(props: any) {
     const { navigation } = props;
     const { t } = useTranslation();
 
     return (
-        <StyledView className={`h-screen`}>
+        <StyledScrollView className={`h-screen bg-gray-700`}>
             <StyledView className={`bg-black w-full h-20`}>
                 <StyledTouchableOpacity onPress={() => navigation.navigate(Dashboard)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>
@@ -68,7 +69,7 @@ function Overview(props: any) {
                     </StyledView>
                 </StyledTouchableOpacity>
             </StyledView>
-        </StyledView>
+        </StyledScrollView>
     );
 }
 

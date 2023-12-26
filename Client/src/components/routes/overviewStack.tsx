@@ -19,10 +19,10 @@ function OverviewStack() {
         <>
             <StatusBar barStyle="light-content" />
             <Stack.Navigator initialRouteName="Overview" >
-                <Stack.Screen 
-                    name="Overview" 
-                    component={Overview} 
-                    options={{ headerShown: true }} 
+                <Stack.Screen
+                    name="Overview"
+                    component={Overview}
+                    options={{ headerShown: true }}
                 />
                 <Stack.Screen name="Dashboard" component={Dashboard} />
                 <Stack.Screen name="Loading" component={Loading} />
