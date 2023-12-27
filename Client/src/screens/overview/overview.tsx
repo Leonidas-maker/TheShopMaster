@@ -9,6 +9,7 @@ import Login from "../login/login";
 import Registration from "../registration/registration";
 import Settings from "../settings/settings";
 import ShoppingList from "../shoppingList/shoppingList";
+import Debug from "../devScreens/debug/debug";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -65,6 +66,14 @@ function Overview(props: any) {
                 <StyledTouchableOpacity onPress={() => navigation.navigate(ShoppingList)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>
                         <StyledText className={`text-white font-bold text-2xl`}>Shopping List</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(Debug)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Debug</StyledText>
                         <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
                     </StyledView>
                 </StyledTouchableOpacity>

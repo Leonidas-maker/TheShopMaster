@@ -11,6 +11,7 @@ import Report from '../../screens/report/report';
 import ProductInfo from '../../screens/productInfo/productInfo';
 import Imprint from '../../screens/imprint/imprint';
 import Credits from '../../screens/credits/credits';
+import Debug from '../../screens/devScreens/debug/debug';
 
 const Stack = createStackNavigator();
 
@@ -30,10 +31,11 @@ function OverviewStack() {
                 <Stack.Screen name="Registration" component={Registration} />
                 <Stack.Screen name="Settings" component={Settings} />
                 <Stack.Screen name="ShoppingList" component={ShoppingList} />
-                <Stack.Screen name="credits" component={Credits} />
-                <Stack.Screen name="imprint" component={Imprint} />
-                <Stack.Screen name="productInfo" component={ProductInfo} />
-                <Stack.Screen name="report" component={Report} />
+                <Stack.Screen name="Credits" component={Credits} />
+                <Stack.Screen name="Imprint" component={Imprint} />
+                <Stack.Screen name="ProductInfo" component={ProductInfo} />
+                <Stack.Screen name="Report" component={Report} />
+                <Stack.Screen name="Debug" component={Debug} />
             </Stack.Navigator>
         </>
     );
