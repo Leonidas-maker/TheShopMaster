@@ -1,11 +1,5 @@
 from fastapi import FastAPI
 
-import sys
-from pathlib import Path
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "config"))
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "models"))
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "routes"))
-
 from models import m_user
 from database import engine
 from routes import user, auth

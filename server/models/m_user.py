@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, TIMESTAMP, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import MEDIUMBLOB
 
 import sys
@@ -51,9 +51,11 @@ class UserSecurity(Base):
     security_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     password = Column(String(255), nullable=False)
-    _2fa = Column(Boolean, default=False)
+    _2fa = Column(String(255))
     forgot_password = Column(String(255))
-    application_token = Column(JSON)
+    application_tokens = Column(MutableDict.as_mutable(JSON), default={}) #* Use MutableDict to allow changes to the dictionary
+    temporary_tokens = Column(String(255))
+    deactivated_tokens = Column(String(255))
     verified = Column(Boolean, default=False)
     _2fa_backup = Column(String(255))
     last_modified = Column(TIMESTAMP, nullable=False)

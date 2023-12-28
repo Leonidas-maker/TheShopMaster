@@ -1,21 +1,26 @@
 from fastapi import FastAPI, APIRouter, Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "controllers"))
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "models"))
-sys.path.append(str(Path(__file__).parent.parent.absolute() / "middleware"))
+sys.path.append(str(Path(__file__).parent.parent.absolute()))
 
 from sqlalchemy.orm import Session
-from controllers.user import CrudUser
 from models import s_user
 from middleware.database import get_db
+from middleware.auth import verify_access_token
+from middleware.user import get_user
 
 users_router = APIRouter()
 
-@users_router.get("/me")
-def read_me():
-    return {"Hello": "World"}
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+@users_router.get("/me", response_model=s_user.User)
+def read_me(access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    jwt_payload = verify_access_token(access_token)
+    if jwt_payload:
+        return get_user(db, user_id=jwt_payload["sub"])
+    else:
+        raise HTTPException(status_code=401, detail="Unauthorized")
 
 @users_router.put("/me")
 def update_me():
