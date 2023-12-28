@@ -2,6 +2,8 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Text, View, TextInput, TouchableHighlight } from "react-native";
 import { styled } from "nativewind";
+import UsernameInput from "../../components/textInputs/usernameInput";
+import PasswordInput from "../../components/textInputs/passwordInput";
 
 const StyledText = styled(Text);
 const StyledView = styled(View);
@@ -23,17 +25,8 @@ function Login() {
             	<StyledText className={`text-white font-bold text-4xl`}>Login</StyledText>
 			</StyledView>
 			<StyledView className={`mx-10`}>
-				<StyledTextInput 
-					className={`border-2 border-gray-400 rounded-md p-3 text-xl text-white`}
-					placeholder="Benutzername / E-Mail"
-					placeholderTextColor={'#FFFFFF'}
-				/>
-				<StyledTextInput 
-					className={`border-2 border-gray-400 rounded-md p-3 text-xl text-white mt-5`}
-					placeholder="Passwort"
-					placeholderTextColor={'#FFFFFF'}
-					secureTextEntry={true}
-				/>
+				<UsernameInput />
+				<PasswordInput />
 			</StyledView>
 			<StyledTouchableHighlight
 				onPress={handlePress}
