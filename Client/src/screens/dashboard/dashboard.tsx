@@ -14,6 +14,7 @@ function Dashboard() {
   const { t } = useTranslation();
 
   //TODO: Add logic to insert products from database
+  //TODO: Edit Styling of Web Version (too much tiles in one row)
   return (
     <StyledScrollView className={`bg-gray-800 h-screen`}>
       <StyledView className={`flex flex-row flex-wrap justify-around px-4`}>

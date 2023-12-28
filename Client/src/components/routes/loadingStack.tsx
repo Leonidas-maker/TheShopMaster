@@ -3,6 +3,7 @@ import Loading from '../../screens/loading/loading';
 import HomeBottomTabs from './homeBottomTabs';
 import { StatusBar } from 'react-native';
 import OverviewStack from './overviewStack';
+import CredentialStack from './credentialStack';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ function LoadingStack() {
         <Stack.Screen name="Loading" component={Loading} />
         <Stack.Screen name="HomeBottomTabs" component={HomeBottomTabs} />
         <Stack.Screen name="OverviewStack" component={OverviewStack} />
+        <Stack.Screen name="CredentialStack" component={CredentialStack} />
       </Stack.Navigator>
     </>
   );

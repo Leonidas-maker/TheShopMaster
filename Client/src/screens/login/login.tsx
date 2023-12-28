@@ -4,6 +4,8 @@ import { Text, View, TextInput, TouchableHighlight } from "react-native";
 import { styled } from "nativewind";
 import UsernameInput from "../../components/textInputs/usernameInput";
 import PasswordInput from "../../components/textInputs/passwordInput";
+import Registration from "../registration/registration";
+import { useNavigation } from "@react-navigation/native";
 
 const StyledText = styled(Text);
 const StyledView = styled(View);
@@ -12,8 +14,11 @@ const StyledTouchableHighlight = styled(TouchableHighlight);
 
 //TODO: Make own component for text input
 //!: Not final design - just for testing the login function
+//?: Not quite sure where the error from the navigation comes from but it works
 function Login() {
     const { t } = useTranslation();
+
+	const navigation = useNavigation();
 
 	const handlePress = () => {
 		console.log("Login pressed");
@@ -35,6 +40,15 @@ function Login() {
 				>
 				<StyledView>
 					<StyledText className={`text-white font-bold text-2xl`}>Login</StyledText>
+				</StyledView>
+			</StyledTouchableHighlight>
+			<StyledTouchableHighlight
+				onPress={() => navigation.navigate(Registration)}
+				className={`rounded-md p-3 mt-5 items-center justify-center mx-10 bg-green-500`}
+				underlayColor={'green'}
+				>
+				<StyledView>
+					<StyledText className={`text-white font-bold text-2xl`}>Noch kein Account?</StyledText>
 				</StyledView>
 			</StyledTouchableHighlight>
         </StyledView>
