@@ -83,6 +83,8 @@ class UserSecurity(UserSecurityBase):
     application_tokens: Optional[dict] 
     temporary_tokens: Optional[str] = None
     active_access_tokens: Optional[str] = None
+    secutity_warns: Optional[int] = 0
+    locked: Optional[bool] = False
     _2fa_backup: Optional[str] = None
     last_modified: datetime
 

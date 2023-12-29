@@ -3,7 +3,7 @@
         "u_row": 29,
         "u_column": 43,
         "u_content_menu": 2,
-        "u_content_text": 32,
+        "u_content_text": 34,
         "u_content_image": 21,
         "u_content_button": 4,
         "u_content_divider": 10,
@@ -43,6 +43,7 @@
                                             "target": "_blank"
                                         }
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_image_16",
@@ -90,6 +91,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_25",
                         "htmlClassNames": "u_row"
@@ -134,6 +136,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_26",
@@ -144,7 +147,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">DANKE FÜR DEINE REGISTRIERUNG!</p>"
+                                    "text": "<p style=\"line-height: 140%;\">SICHERHEITSHINWEIS</p>"
                                 }
                             }
                         ],
@@ -174,6 +177,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_17",
                         "htmlClassNames": "u_row"
@@ -213,6 +217,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_heading_7",
@@ -223,7 +228,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Aktiviere deinen Account</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>"
+                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Deaktivierung 2FA</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>"
                                 }
                             }
                         ],
@@ -253,6 +258,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_15",
                         "htmlClassNames": "u_row"
@@ -291,6 +297,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_heading_8",
@@ -301,7 +308,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span>Hallo Sparfuchs,</span></span></span></span></span></span></span></span></span></span></span></span>",
+                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Hallo {username},</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>",
                                     "_override": {
                                         "mobile": {
                                             "fontSize": "17px",
@@ -337,6 +344,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_19",
                         "htmlClassNames": "u_row"
@@ -374,6 +382,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_27",
@@ -384,11 +393,11 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Wir freuen uns riesig, dass du dich für TheShopMaster entschieden hast, um die besten Deals für deine Supermarkt-Einkäufe zu finden. Du bist nur noch einen kleinen Schritt davon entfernt, die Preise zu vergleichen und beim Einkaufen kräftig zu sparen!</p>",
+                                    "text": "<p style=\"line-height: 140%;\">wir bestätigen hiermit, dass die Zwei-Faktor-Authentifizierung (2FA) für deinen Account deaktiviert wurde. Du wirst ab sofort für den Zugang zu deinem Account nur dein Passwort benötigen.</p>",
                                     "_override": {
                                         "mobile": {
                                             "textAlign": "center",
-                                            "fontSize": "12px",
+                                            "fontSize": "14px",
                                             "containerPadding": "0px 10px 10px"
                                         }
                                     }
@@ -421,253 +430,9 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_18",
-                        "htmlClassNames": "u_row"
-                    },
-                    "selectable": true,
-                    "draggable": true,
-                    "duplicatable": true,
-                    "deletable": true,
-                    "hideable": true
-                }
-            },
-            {
-                "id": "-Q96uofsfe",
-                "cells": [
-                    1
-                ],
-                "columns": [
-                    {
-                        "id": "7FtJIzLPeR",
-                        "contents": [
-                            {
-                                "id": "PPFnbYWxBI",
-                                "type": "text",
-                                "values": {
-                                    "containerPadding": "10px",
-                                    "anchor": "",
-                                    "fontSize": "14px",
-                                    "color": "#000000",
-                                    "textAlign": "center",
-                                    "lineHeight": "140%",
-                                    "linkStyle": {
-                                        "inherit": true,
-                                        "linkColor": "#0000ee",
-                                        "linkHoverColor": "#0000ee",
-                                        "linkUnderline": true,
-                                        "linkHoverUnderline": true
-                                    },
-                                    "displayCondition": null,
-                                    "_meta": {
-                                        "htmlID": "u_content_text_28",
-                                        "htmlClassNames": "u_content_text"
-                                    },
-                                    "selectable": true,
-                                    "draggable": true,
-                                    "duplicatable": true,
-                                    "deletable": true,
-                                    "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Um deinen Account zu aktivieren, brauchst du nur diesen Verifizierungscode einzugeben:</p>"
-                                }
-                            }
-                        ],
-                        "values": {
-                            "backgroundColor": "",
-                            "padding": "0px",
-                            "border": {},
-                            "borderRadius": "0px",
-                            "_meta": {
-                                "htmlID": "u_column_32",
-                                "htmlClassNames": "u_column"
-                            }
-                        }
-                    }
-                ],
-                "values": {
-                    "displayCondition": null,
-                    "columns": false,
-                    "backgroundColor": "",
-                    "columnsBackgroundColor": "",
-                    "backgroundImage": {
-                        "url": "",
-                        "fullWidth": true,
-                        "repeat": "no-repeat",
-                        "size": "custom",
-                        "position": "center"
-                    },
-                    "padding": "0px",
-                    "anchor": "",
-                    "_meta": {
-                        "htmlID": "u_row_20",
-                        "htmlClassNames": "u_row"
-                    },
-                    "selectable": true,
-                    "draggable": true,
-                    "duplicatable": true,
-                    "deletable": true,
-                    "hideable": true
-                }
-            },
-            {
-                "id": "95gUHL0dT3",
-                "cells": [
-                    1
-                ],
-                "columns": [
-                    {
-                        "id": "l6EDT23EqG",
-                        "contents": [
-                            {
-                                "id": "cXaG_0Oy-U",
-                                "type": "heading",
-                                "values": {
-                                    "containerPadding": "10px",
-                                    "anchor": "",
-                                    "headingType": "h1",
-                                    "fontFamily": {
-                                        "label": "Arial Black",
-                                        "value": "arial black,AvenirNext-Heavy,avant garde,arial",
-                                        "url": "",
-                                        "defaultFont": true
-                                    },
-                                    "fontWeight": 700,
-                                    "fontSize": "30px",
-                                    "color": "#000000",
-                                    "textAlign": "center",
-                                    "lineHeight": "140%",
-                                    "linkStyle": {
-                                        "inherit": true,
-                                        "linkColor": "#0000ee",
-                                        "linkHoverColor": "#0000ee",
-                                        "linkUnderline": true,
-                                        "linkHoverUnderline": true
-                                    },
-                                    "displayCondition": null,
-                                    "_meta": {
-                                        "htmlID": "u_content_heading_9",
-                                        "htmlClassNames": "u_content_heading"
-                                    },
-                                    "selectable": true,
-                                    "draggable": true,
-                                    "duplicatable": true,
-                                    "deletable": true,
-                                    "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span>XXXXXX</span></span></span></span></span></span></span>"
-                                }
-                            }
-                        ],
-                        "values": {
-                            "backgroundColor": "",
-                            "padding": "0px",
-                            "border": {},
-                            "borderRadius": "0px",
-                            "_meta": {
-                                "htmlID": "u_column_34",
-                                "htmlClassNames": "u_column"
-                            }
-                        }
-                    }
-                ],
-                "values": {
-                    "displayCondition": null,
-                    "columns": false,
-                    "backgroundColor": "",
-                    "columnsBackgroundColor": "",
-                    "backgroundImage": {
-                        "url": "",
-                        "fullWidth": true,
-                        "repeat": "no-repeat",
-                        "size": "custom",
-                        "position": "center"
-                    },
-                    "padding": "0px",
-                    "anchor": "",
-                    "_meta": {
-                        "htmlID": "u_row_22",
-                        "htmlClassNames": "u_row"
-                    },
-                    "selectable": true,
-                    "draggable": true,
-                    "duplicatable": true,
-                    "deletable": true,
-                    "hideable": true
-                }
-            },
-            {
-                "id": "nQsi0UFtca",
-                "cells": [
-                    1
-                ],
-                "columns": [
-                    {
-                        "id": "kBO97-iaci",
-                        "contents": [
-                            {
-                                "id": "yLMJulEFHS",
-                                "type": "text",
-                                "values": {
-                                    "containerPadding": "10px",
-                                    "anchor": "",
-                                    "fontSize": "14px",
-                                    "color": "#000000",
-                                    "textAlign": "center",
-                                    "lineHeight": "140%",
-                                    "linkStyle": {
-                                        "inherit": true,
-                                        "linkColor": "#0000ee",
-                                        "linkHoverColor": "#0000ee",
-                                        "linkUnderline": true,
-                                        "linkHoverUnderline": true
-                                    },
-                                    "displayCondition": null,
-                                    "_meta": {
-                                        "htmlID": "u_content_text_30",
-                                        "htmlClassNames": "u_content_text"
-                                    },
-                                    "selectable": true,
-                                    "draggable": true,
-                                    "duplicatable": true,
-                                    "deletable": true,
-                                    "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Der Code ist 30 Minuten gültig. Danach musst du dein Account neu erstellen.</p>\n<p style=\"line-height: 140%;\">Bei Fragen sind wir für dich da!</p>",
-                                    "_override": {
-                                        "mobile": {
-                                            "textAlign": "center",
-                                            "fontSize": "12px"
-                                        }
-                                    }
-                                }
-                            }
-                        ],
-                        "values": {
-                            "backgroundColor": "",
-                            "padding": "0px",
-                            "border": {},
-                            "borderRadius": "0px",
-                            "_meta": {
-                                "htmlID": "u_column_36",
-                                "htmlClassNames": "u_column"
-                            }
-                        }
-                    }
-                ],
-                "values": {
-                    "displayCondition": null,
-                    "columns": false,
-                    "backgroundColor": "",
-                    "columnsBackgroundColor": "",
-                    "backgroundImage": {
-                        "url": "",
-                        "fullWidth": true,
-                        "repeat": "no-repeat",
-                        "size": "custom",
-                        "position": "center"
-                    },
-                    "padding": "0px",
-                    "anchor": "",
-                    "_meta": {
-                        "htmlID": "u_row_24",
                         "htmlClassNames": "u_row"
                     },
                     "selectable": true,
@@ -687,10 +452,76 @@
                         "id": "L72oAqC4AC",
                         "contents": [
                             {
+                                "id": "AGfFgoqmTd",
+                                "type": "text",
+                                "values": {
+                                    "containerPadding": "10px 40px",
+                                    "anchor": "",
+                                    "fontWeight": 700,
+                                    "fontSize": "14px",
+                                    "textAlign": "center",
+                                    "lineHeight": "140%",
+                                    "linkStyle": {
+                                        "inherit": true,
+                                        "linkColor": "#0000ee",
+                                        "linkHoverColor": "#0000ee",
+                                        "linkUnderline": true,
+                                        "linkHoverUnderline": true
+                                    },
+                                    "displayCondition": null,
+                                    "_meta": {
+                                        "htmlID": "u_content_text_34",
+                                        "htmlClassNames": "u_content_text"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true,
+                                    "text": "<p style=\"line-height: 140%;\">Bitte sei dir bewusst, dass durch das Entfernen der 2FA dein Account einem höheren Sicherheitsrisiko ausgesetzt sein könnte.</p>\n<p style=\"line-height: 140%;\"> </p>\n<p style=\"line-height: 140%;\">Wir empfehlen, regelmäßig dein Passwort zu ändern und stark zu gestalten, um die Sicherheit deines Accounts zu gewährleisten.</p>"
+                                }
+                            },
+                            {
+                                "id": "9ngDepvcl8",
+                                "type": "text",
+                                "values": {
+                                    "containerPadding": "10px",
+                                    "anchor": "",
+                                    "fontWeight": 400,
+                                    "fontSize": "14px",
+                                    "textAlign": "center",
+                                    "lineHeight": "140%",
+                                    "linkStyle": {
+                                        "inherit": true,
+                                        "linkColor": "#0000ee",
+                                        "linkHoverColor": "#0000ee",
+                                        "linkUnderline": true,
+                                        "linkHoverUnderline": true
+                                    },
+                                    "hideDesktop": false,
+                                    "displayCondition": null,
+                                    "_meta": {
+                                        "htmlID": "u_content_text_33",
+                                        "htmlClassNames": "u_content_text"
+                                    },
+                                    "selectable": true,
+                                    "draggable": true,
+                                    "duplicatable": true,
+                                    "deletable": true,
+                                    "hideable": true,
+                                    "text": "<p style=\"line-height: 140%;\">Falls du dein 2FA nicht deaktiviert hast solltest du dein Passwort ändern, diesen erneut aktivieren und uns bitte <strong><span style=\"text-decoration: underline; line-height: 19.6px;\">sofort</span><span style=\"line-height: 19.6px;\"> </span></strong>unter <span style=\"line-height: 19.6px;\"><a rel=\"noopener\" href=\"mailto:support@theshopmaster.com\" target=\"_blank\" data-u-link-value=\"eyJuYW1lIjoiZW1haWwiLCJhdHRycyI6eyJocmVmIjoibWFpbHRvOnt7ZW1haWx9fT9zdWJqZWN0PXt7c3ViamVjdH19JmJvZHk9e3tib2R5fX0ifSwidmFsdWVzIjp7ImVtYWlsIjoic3VwcG9ydEB0aGVzaG9wbWFzdGVyLmNvbSIsInN1YmplY3QiOiIiLCJib2R5IjoiIn19\">support@theshopmaster.com</a> kontaktieren</span>.</p>",
+                                    "_override": {
+                                        "mobile": {
+                                            "containerPadding": "10px"
+                                        }
+                                    }
+                                }
+                            },
+                            {
                                 "id": "WsnUKPpFTn",
                                 "type": "text",
                                 "values": {
-                                    "containerPadding": "21px",
+                                    "containerPadding": "10px",
                                     "anchor": "",
                                     "fontSize": "14px",
                                     "color": "#000000",
@@ -703,6 +534,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_29",
@@ -743,6 +575,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_21",
                         "htmlClassNames": "u_row"
@@ -780,6 +613,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_31",
@@ -820,6 +654,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_23",
                         "htmlClassNames": "u_row"
@@ -857,15 +692,16 @@
                                     "altText": "",
                                     "action": {
                                         "name": "web",
-                                        "attrs": {
-                                            "href": "{{href}}",
-                                            "target": "{{target}}"
-                                        },
                                         "values": {
                                             "href": "https://github.com/Leonidas-maker/TheShopMaster",
                                             "target": "_blank"
+                                        },
+                                        "attrs": {
+                                            "href": "{{href}}",
+                                            "target": "{{target}}"
                                         }
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_image_18",
@@ -913,6 +749,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_27",
                         "htmlClassNames": "u_row"
@@ -951,6 +788,7 @@
                                     "textAlign": "center",
                                     "containerPadding": "5px",
                                     "anchor": "",
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_divider_10",
@@ -980,6 +818,7 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
+                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_32",
@@ -1020,6 +859,7 @@
                     },
                     "padding": "0px",
                     "anchor": "",
+                    "hideDesktop": false,
                     "_meta": {
                         "htmlID": "u_row_26",
                         "htmlClassNames": "u_row"

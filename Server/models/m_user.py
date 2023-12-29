@@ -58,6 +58,7 @@ class UserSecurity(Base):
     temporary_tokens = Column(TEXT(350))
     active_access_tokens = Column(TEXT(3525)) #* Max 75 access tokens
     secutity_warns = Column(Integer, default=0) #* Number of times suspicious activity has been detected max. 10
+    locked = Column(Boolean, default=False)
     verified = Column(Boolean, default=False)
     _2fa_backup = Column(String(255))
     last_modified = Column(TIMESTAMP, nullable=False)

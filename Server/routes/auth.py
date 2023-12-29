@@ -32,7 +32,7 @@ def register_application():
 
 @auth_router.post("/register", response_model=s_auth.UserRegister)
 def user_register(user: s_user.UserCreate, db: Session = Depends(get_db)):
-    db_user = get_user(db, user.email, user.username)
+    db_user = get_user(db, email=user.email, username=user.username)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     
@@ -43,7 +43,6 @@ def user_register(user: s_user.UserCreate, db: Session = Depends(get_db)):
 
 @auth_router.post("/login", response_model=s_auth.UserTokens)
 def user_login(user_login: s_auth.UserLogin, db: Session = Depends(get_db)):
-    print(user_login) 
     return login(db, user_login.ident, user_login.password, user_login.application_id)
 
 @auth_router.delete("/logout/{user_id}")
@@ -58,8 +57,8 @@ def user_forgot_password():
 def user_reset_password():
     return {"Hello": "World"}
 
-@auth_router.post("/verify-email/{user_id}")
-def user_verify_email():
+@auth_router.post("/verify-account/{user_id}")
+def user_verify_account():
     return {"Hello": "World"}
 
 @auth_router.post("/add-2fa/{user_id}")

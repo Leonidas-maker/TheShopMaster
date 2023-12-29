@@ -15,7 +15,8 @@ from middleware.auth import check_password
 def get_tokens(db: Session, refresh_token: str):
     payload = verify_refresh_token(refresh_token)
     if payload and payload.get("jti"):
-        refresh_token, access_token = create_tokens(db, payload["sub"], payload["jti"], payload["aud"])
+        old_jti = create_jti_timestamp(payload["jti"], payload["exp"])
+        refresh_token, access_token = create_tokens(db, payload["sub"], old_jti, payload["aud"])
         return {"refresh_token": refresh_token, "access_token": access_token}
     else:
         raise HTTPException(status_code=401, detail="Forbidden")
@@ -69,4 +70,4 @@ def logout(db: Session, user_id: str, refresh_token: str, access_token: str):
             return {"message": "Logout successful"}
             
     else:
-        raise HTTPException(status_code=400, detail="Forbidden")
+        raise HTTPException(status_code=403, detail="Forbidden")
