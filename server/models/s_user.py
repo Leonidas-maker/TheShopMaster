@@ -82,7 +82,7 @@ class UserSecurity(UserSecurityBase):
     forgot_password: Optional[str] = None
     application_tokens: Optional[dict] 
     temporary_tokens: Optional[str] = None
-    deactivated_tokens: Optional[str] = None
+    active_access_tokens: Optional[str] = None
     _2fa_backup: Optional[str] = None
     last_modified: datetime
 

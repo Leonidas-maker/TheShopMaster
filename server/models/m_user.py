@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, TIMESTAMP, JSON
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, TIMESTAMP, JSON, TEXT
 from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.dialects.mysql import MEDIUMBLOB
 
@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent.absolute() / "config"))
 
 from database import Base
+from security import *
 
 class User(Base):
     __tablename__ = "users"
@@ -54,11 +55,13 @@ class UserSecurity(Base):
     _2fa = Column(String(255))
     forgot_password = Column(String(255))
     application_tokens = Column(MutableDict.as_mutable(JSON), default={}) #* Use MutableDict to allow changes to the dictionary
-    temporary_tokens = Column(String(255))
-    deactivated_tokens = Column(String(255))
+    temporary_tokens = Column(TEXT(350))
+    active_access_tokens = Column(TEXT(3525)) #* Max 75 access tokens
+    secutity_warns = Column(Integer, default=0) #* Number of times suspicious activity has been detected max. 10
     verified = Column(Boolean, default=False)
     _2fa_backup = Column(String(255))
     last_modified = Column(TIMESTAMP, nullable=False)
+    
 
 class ShoppingCart(Base):
     __tablename__ = "shopping_carts"

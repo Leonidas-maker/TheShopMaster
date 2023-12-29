@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).parent.parent.absolute()))
 
-from middleware.auth import verify_refresh_token, create_tokens
+from middleware.auth import verify_refresh_token, create_tokens, create_jti_timestamp, get_token_payload
 from models import s_user, m_user
 
 # ~~~~~~~~~~~~~~ Middleware ~~~~~~~~~~~~~ #
@@ -14,7 +14,6 @@ from middleware.auth import check_password
 
 def get_tokens(db: Session, refresh_token: str):
     payload = verify_refresh_token(refresh_token)
-    print(payload)
     if payload and payload.get("jti"):
         refresh_token, access_token = create_tokens(db, payload["sub"], payload["jti"], payload["aud"])
         return {"refresh_token": refresh_token, "access_token": access_token}
@@ -38,28 +37,36 @@ def login(db: Session, ident: str, password: str, application_id: str = None):
 
 def logout(db: Session, user_id: str, refresh_token: str, access_token: str):
     refresh_payload = verify_refresh_token(refresh_token)
+    access_payload = get_token_payload(access_token)
     if refresh_payload and refresh_payload.get("jti"):
         user_security = db.query(m_user.UserSecurity).filter(m_user.UserSecurity.user_id == user_id).first()
         if user_security:
-            try:
-                deactivated_tokens = user_security.deactivated_tokens.split(",")
-            except:
-                deactivated_tokens = []
-            user_security.deactivated_tokens = ",".join(deactivated_tokens + [refresh_payload["jti"]])
-
+            # Remove refresh token
             try:
                 temp_tokens = user_security.temporary_tokens.split(",")
             except:
                 temp_tokens = []
-
-            if refresh_payload["jti"] in user_security.application_tokens:
-                user_security.application_tokens = {key:val for key, val in user_security.application_tokens.items() if val != refresh_payload["jti"]}
-                db.commit()
-                return {"message": "Logout successful"}
-            elif refresh_payload["jti"] in temp_tokens:
-                temp_tokens.remove(refresh_payload["jti"])
+            
+            jti_timestamp = create_jti_timestamp(refresh_payload["jti"], refresh_payload["exp"])
+            if jti_timestamp in user_security.application_tokens.values():
+                user_security.application_tokens = {key:val for key, val in user_security.application_tokens.items() if val != jti_timestamp}
+            elif jti_timestamp in temp_tokens:
+                temp_tokens.remove(jti_timestamp)
                 user_security.temporary_tokens = ",".join(temp_tokens)
-                db.commit()   
-                return {"message": "Logout successful"}
+            else:
+                raise HTTPException(status_code=404, detail="Not Found")
+
+            # Remove access token
+            jti_timestamp = create_jti_timestamp(access_payload["jti"], access_payload["exp"])
+            try:
+                active_tokens = user_security.active_access_tokens.split(",")
+            except:
+                active_tokens = []
+            if jti_timestamp in active_tokens:
+                active_tokens.remove(jti_timestamp)
+                user_security.active_access_tokens = ",".join(active_tokens)
+            db.commit()
+            return {"message": "Logout successful"}
+            
     else:
         raise HTTPException(status_code=400, detail="Forbidden")
