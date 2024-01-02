@@ -29,7 +29,6 @@ from models import s_user, m_user
 # ======================= Get Keys ======================= #
 # ======================================================== #
 
-
 # ~~~~~~~~~~~~~~ Private Keys ~~~~~~~~~~~~~ #
 def get_tokens_private(
     folder_path: str = str(Path(__file__).parent.absolute() / "jwt_keys"),
@@ -74,7 +73,6 @@ def get_access_token_public(
 # ======================== Verify ======================== #
 # ======================================================== #
 
-
 # ~~~~~~~~~~~~~~ Refresh Token ~~~~~~~~~~~~~ #
 def verify_refresh_token(token: str):
     public_key = get_refresh_token_public()
@@ -86,7 +84,6 @@ def verify_refresh_token(token: str):
         return False
     except jwt.InvalidTokenError:
         return False
-
 
 def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str): 
     if application_id and application_id != "webapplication":
@@ -101,7 +98,6 @@ def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str)
             return True
         else:
             return False
-
 
 # ~~~~~~~~~~~~~~ Access Token ~~~~~~~~~~~~~ #
 def verify_access_token(token: str):
@@ -118,6 +114,7 @@ def verify_access_token(token: str):
 def get_token_payload(token: str):
     payload = jwt.decode(token, options={"verify_signature": False})
     return payload
+
 
 # ======================================================== #
 # ==================== Tokens-Rotation =================== #
@@ -230,7 +227,6 @@ def create_tokens(
 # ==================== Tokens-Revocation ================= #
 # ======================================================== #
 
-
 # ~~~~~~~~~~~~~~ Single Token ~~~~~~~~~~~~~ #
 def revoke_application_token(user: s_user.User, application_id: str, db: Session):
     try:
@@ -259,9 +255,10 @@ def revoke_all_application_tokens(user: s_user.User, db: Session):
         return False
 
 
-# ======================================================== #
-# ========================== OTP ========================= #
-# ======================================================== #
+###########################################################################
+################################### OTP ###################################
+###########################################################################
+    
 def verify_otp(user: s_user.User, otp: str):
     pass
 

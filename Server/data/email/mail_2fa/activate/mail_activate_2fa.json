@@ -308,7 +308,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span>Hallo {username},</span></span></span></span></span></span></span></span></span></span></span></span></span></span>",
+                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span>Hallo {{{{username}}}},</span></span></span></span></span></span></span></span></span></span></span></span></span></span>",
                                     "_override": {
                                         "mobile": {
                                             "fontSize": "17px",

@@ -228,7 +228,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Verifiziere deinen Account</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>"
+                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Temporäre Sperrung deines Accounts</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>"
                                 }
                             }
                         ],
@@ -308,7 +308,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span>Hallo {username},</span></span></span></span></span></span></span></span></span></span></span></span></span></span>",
+                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span><span>Hallo {{username}},</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span>",
                                     "_override": {
                                         "mobile": {
                                             "fontSize": "17px",
@@ -369,7 +369,7 @@
                                 "id": "a3b8kNscgE",
                                 "type": "text",
                                 "values": {
-                                    "containerPadding": "10px",
+                                    "containerPadding": "10px 47px",
                                     "anchor": "",
                                     "fontSize": "14px",
                                     "color": "#000000",
@@ -393,12 +393,12 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">wir haben festgestellt, dass es kürzlich ungewöhnliche Aktivitäten in deinem Account gab, weshalb wir diesen zum Schutz deiner Daten temporär gesperrt haben.</p>",
+                                    "text": "<p style=\"line-height: 140%;\">wir haben festgestellt, dass es einige ungewöhnliche Aktivitäten in deinem Account gab. Um deine persönlichen Daten zu schützen, haben wir deinen Account als Vorsichtsmaßnahme vorübergehend gesperrt.</p>",
                                     "_override": {
                                         "mobile": {
                                             "textAlign": "center",
                                             "fontSize": "14px",
-                                            "containerPadding": "0px 10px 10px"
+                                            "containerPadding": "10px"
                                         }
                                     }
                                 }
@@ -479,7 +479,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Keine Sorge, wir bringen dich schnell wieder auf Schnäppchenjagd! Hier ist dein persönlicher Verifizierungscode, um deinen Account zu reaktivieren:</p>"
+                                    "text": "<p style=\"line-height: 140%;\"><strong>Keine Sorge, dein Account wird automatisch in einer Stunde wieder freigeschaltet.</strong></p>"
                                 }
                             }
                         ],
@@ -522,179 +522,6 @@
                 }
             },
             {
-                "id": "95gUHL0dT3",
-                "cells": [
-                    1
-                ],
-                "columns": [
-                    {
-                        "id": "l6EDT23EqG",
-                        "contents": [
-                            {
-                                "id": "cXaG_0Oy-U",
-                                "type": "heading",
-                                "values": {
-                                    "containerPadding": "10px 10px 0px",
-                                    "anchor": "",
-                                    "headingType": "h1",
-                                    "fontFamily": {
-                                        "label": "Arial Black",
-                                        "value": "arial black,AvenirNext-Heavy,avant garde,arial",
-                                        "url": "",
-                                        "defaultFont": true
-                                    },
-                                    "fontWeight": 700,
-                                    "fontSize": "30px",
-                                    "color": "#000000",
-                                    "textAlign": "center",
-                                    "lineHeight": "140%",
-                                    "linkStyle": {
-                                        "inherit": true,
-                                        "linkColor": "#0000ee",
-                                        "linkHoverColor": "#0000ee",
-                                        "linkUnderline": true,
-                                        "linkHoverUnderline": true
-                                    },
-                                    "hideDesktop": false,
-                                    "displayCondition": null,
-                                    "_meta": {
-                                        "htmlID": "u_content_heading_9",
-                                        "htmlClassNames": "u_content_heading"
-                                    },
-                                    "selectable": true,
-                                    "draggable": true,
-                                    "duplicatable": true,
-                                    "deletable": true,
-                                    "hideable": true,
-                                    "text": "<span><span><span><span><span><span><span><span><span><span><span><span><span><span>XXXXXX</span></span></span></span></span></span></span></span></span></span></span></span></span></span>"
-                                }
-                            }
-                        ],
-                        "values": {
-                            "backgroundColor": "",
-                            "padding": "0px",
-                            "border": {},
-                            "borderRadius": "0px",
-                            "_meta": {
-                                "htmlID": "u_column_34",
-                                "htmlClassNames": "u_column"
-                            }
-                        }
-                    }
-                ],
-                "values": {
-                    "displayCondition": null,
-                    "columns": false,
-                    "backgroundColor": "",
-                    "columnsBackgroundColor": "",
-                    "backgroundImage": {
-                        "url": "",
-                        "fullWidth": true,
-                        "repeat": "no-repeat",
-                        "size": "custom",
-                        "position": "center"
-                    },
-                    "padding": "0px",
-                    "anchor": "",
-                    "hideDesktop": false,
-                    "_meta": {
-                        "htmlID": "u_row_22",
-                        "htmlClassNames": "u_row"
-                    },
-                    "selectable": true,
-                    "draggable": true,
-                    "duplicatable": true,
-                    "deletable": true,
-                    "hideable": true
-                }
-            },
-            {
-                "id": "nQsi0UFtca",
-                "cells": [
-                    1
-                ],
-                "columns": [
-                    {
-                        "id": "kBO97-iaci",
-                        "contents": [
-                            {
-                                "id": "yLMJulEFHS",
-                                "type": "text",
-                                "values": {
-                                    "containerPadding": "0px 10px 10px",
-                                    "anchor": "",
-                                    "fontWeight": 700,
-                                    "fontSize": "12px",
-                                    "color": "#000000",
-                                    "textAlign": "center",
-                                    "lineHeight": "140%",
-                                    "linkStyle": {
-                                        "inherit": true,
-                                        "linkColor": "#0000ee",
-                                        "linkHoverColor": "#0000ee",
-                                        "linkUnderline": true,
-                                        "linkHoverUnderline": true
-                                    },
-                                    "hideDesktop": false,
-                                    "displayCondition": null,
-                                    "_meta": {
-                                        "htmlID": "u_content_text_30",
-                                        "htmlClassNames": "u_content_text"
-                                    },
-                                    "selectable": true,
-                                    "draggable": true,
-                                    "duplicatable": true,
-                                    "deletable": true,
-                                    "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">(Der Code ist 30 Minuten gültig)</p>",
-                                    "_override": {
-                                        "mobile": {
-                                            "textAlign": "center",
-                                            "fontSize": "12px"
-                                        }
-                                    }
-                                }
-                            }
-                        ],
-                        "values": {
-                            "backgroundColor": "",
-                            "padding": "0px",
-                            "border": {},
-                            "borderRadius": "0px",
-                            "_meta": {
-                                "htmlID": "u_column_36",
-                                "htmlClassNames": "u_column"
-                            }
-                        }
-                    }
-                ],
-                "values": {
-                    "displayCondition": null,
-                    "columns": false,
-                    "backgroundColor": "",
-                    "columnsBackgroundColor": "",
-                    "backgroundImage": {
-                        "url": "",
-                        "fullWidth": true,
-                        "repeat": "no-repeat",
-                        "size": "custom",
-                        "position": "center"
-                    },
-                    "padding": "0px",
-                    "anchor": "",
-                    "hideDesktop": false,
-                    "_meta": {
-                        "htmlID": "u_row_24",
-                        "htmlClassNames": "u_row"
-                    },
-                    "selectable": true,
-                    "draggable": true,
-                    "duplicatable": true,
-                    "deletable": true,
-                    "hideable": true
-                }
-            },
-            {
                 "id": "l-ojC0yEdE",
                 "cells": [
                     1
@@ -707,7 +534,7 @@
                                 "id": "zfRxl54iXp",
                                 "type": "text",
                                 "values": {
-                                    "containerPadding": "10px 10px 0px",
+                                    "containerPadding": "10px 100px 0px",
                                     "anchor": "",
                                     "fontSize": "14px",
                                     "textAlign": "center",
@@ -719,7 +546,6 @@
                                         "linkUnderline": true,
                                         "linkHoverUnderline": true
                                     },
-                                    "hideDesktop": false,
                                     "displayCondition": null,
                                     "_meta": {
                                         "htmlID": "u_content_text_33",
@@ -730,7 +556,12 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Bei Fragen sind wir für dich da!</p>"
+                                    "text": "<p style=\"line-height: 140%;\">Wir entschuldigen uns für die Unannehmlichkeiten und danken dir für dein Verständnis und deine Geduld.</p>\n<p style=\"line-height: 140%;\"> </p>\n<p style=\"line-height: 140%;\">Bei Fragen oder Bedenken stehen wir dir selbstverständlich zur Verfügung. Du erreichst uns unter <span style=\"line-height: 19.6px;\"><a rel=\"noopener\" href=\"mailto:support@theshopmaster.com\" target=\"_blank\" data-u-link-value=\"eyJuYW1lIjoiZW1haWwiLCJhdHRycyI6eyJocmVmIjoibWFpbHRvOnt7ZW1haWx9fT9zdWJqZWN0PXt7c3ViamVjdH19JmJvZHk9e3tib2R5fX0ifSwidmFsdWVzIjp7ImVtYWlsIjoic3VwcG9ydEB0aGVzaG9wbWFzdGVyLmNvbSIsInN1YmplY3QiOiIiLCJib2R5IjoiIn19\">support@theshopmaster.com</a></span></p>\n<p style=\"line-height: 140%;\"> </p>",
+                                    "_override": {
+                                        "mobile": {
+                                            "containerPadding": "10px"
+                                        }
+                                    }
                                 }
                             },
                             {
@@ -761,7 +592,7 @@
                                     "duplicatable": true,
                                     "deletable": true,
                                     "hideable": true,
-                                    "text": "<p style=\"line-height: 140%;\">Viel Spaß beim Sparen!</p>\n<p style=\"line-height: 140%;\">Dein TheShopMaster Team</p>"
+                                    "text": "<p style=\"line-height: 140%;\">Viele Grüße,</p>\n<p style=\"line-height: 140%;\">Dein TheShopMaster Team</p>"
                                 }
                             }
                         ],
