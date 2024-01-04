@@ -43,7 +43,10 @@
     "react-navigation": "^5.0.0",
     "react-router-dom": "^6.21.1",
     "tailwind-react-native-classnames": "^1.5.1",
-    "tailwindcss-rn": "^1.0.2"
+    "tailwindcss-rn": "^1.0.2",
+    "expo-camera": "~13.4.4",
+    "expo-permissions": "~14.2.1",
+    "expo-barcode-scanner": "~12.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",
