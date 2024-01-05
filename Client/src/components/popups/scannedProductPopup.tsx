@@ -11,14 +11,20 @@ import { styled } from 'nativewind';
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-interface ScannerInfoPopupProps {
+//* Prop productEAN expects a EAN Code from a product (optional - default: N/A product not found)
+//* with the following format: 5901234123457 (EAN13) or 20123451 (EAN8)
+interface ScannedProductPopupProps {
     visible: boolean;
     onClose: () => void;
+    productEAN?: String;
 }
 
-const ScannerInfoPopup: React.FC<ScannerInfoPopupProps> = ({
+//TODO: Add logic to get product information from database based on productEAN
+//TODO: Add styling for product informations
+const ScannedProductPopup: React.FC<ScannedProductPopupProps> = ({
     visible,
     onClose,
+    productEAN = "5901234123457",
 }) => {
     return (
         <Modal
@@ -72,4 +78,4 @@ const ScannerInfoPopup: React.FC<ScannerInfoPopupProps> = ({
     );
 };
 
-export default ScannerInfoPopup;
+export default ScannedProductPopup;
