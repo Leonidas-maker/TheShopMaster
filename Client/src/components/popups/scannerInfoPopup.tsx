@@ -24,7 +24,7 @@ interface ProductPopupProps {
 }
 
 //TODO: Add onPress functionality to buttons
-const ProductPopup: React.FC<ProductPopupProps> = ({
+const ScannerInfoPopup: React.FC<ProductPopupProps> = ({
     visible,
     onClose,
     imagePath = require('../../../public/images/defaultProduct.png'),
@@ -96,4 +96,4 @@ const ProductPopup: React.FC<ProductPopupProps> = ({
     );
 };
 
-export default ProductPopup;
+export default ScannerInfoPopup;
