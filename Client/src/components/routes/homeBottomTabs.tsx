@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StatusBar } from 'react-native';
+import { StatusBar, Button , View} from 'react-native';
+import { styled } from 'nativewind';
 
 import DashboardSVG from '../../../public/images/svg/navigatorIcons/inactive/dashboardSVG';
 import ScannerSVG from '../../../public/images/svg/navigatorIcons/inactive/scannerSVG';
@@ -20,6 +21,9 @@ import ActiveSettingsSVG from '../../../public/images/svg/navigatorIcons/active/
 const Tab = createBottomTabNavigator();
 
 function HomeBottomTabs() {
+    const StyledView = styled(View);
+    const StyledButton = styled(Button);
+
     return (
         <>
             <StatusBar barStyle="light-content" />
@@ -57,7 +61,16 @@ function HomeBottomTabs() {
                         headerTitle: 'TheShopMaster',
                         tabBarIcon: ({ color, size }) => (
                             <ScannerSVG width={size} height={size} fill={color} />
-                        )
+                        ),
+                        headerRight: () => (
+                            <StyledView className={`mx-5`}>
+                                <StyledButton
+                                    onPress={() => alert('This is a button!')}
+                                    title="Info"
+                                    className={`bg-gray-800 text-white rounded-md p-3 mt-5 items-center justify-center mx-10`}
+                                />
+                            </StyledView>
+                        ),
                     }}
                 />
                 <Tab.Screen 

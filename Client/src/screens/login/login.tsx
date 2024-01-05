@@ -15,6 +15,7 @@ const StyledTouchableHighlight = styled(TouchableHighlight);
 //TODO: Make own component for text input
 //!: Not final design - just for testing the login function
 //?: Not quite sure where the error from the navigation comes from but it works
+//?: Could be beaccause of the cycle between login and registration
 function Login() {
     const { t } = useTranslation();
 
