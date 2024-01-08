@@ -1,14 +1,14 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import SearchBarShop from "../../components/searchBar/searchBarShop";
 
 function Search() {
-
     const { t } = useTranslation();
 
     return (
         <View>
-            <Text>Welcome to the Search page</Text>
+            <SearchBarShop />
         </View>
     );
 }

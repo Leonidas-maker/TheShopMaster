@@ -2,7 +2,7 @@
   "expo": {
     "name": "TheShopMaster",
     "slug": "TheShopMaster",
-    "version": "1.0.0",
+    "version": "0.1.0-dev",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -31,7 +31,7 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+          "cameraPermission": "Allow TheShopMaster to access your camera."
         }
       ]
     ]

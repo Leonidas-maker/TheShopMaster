@@ -10,6 +10,7 @@ import Registration from "../registration/registration";
 import Settings from "../settings/settings";
 import ShoppingList from "../shoppingList/shoppingList";
 import Debug from "../devScreens/debug/debug";
+import { expo } from "../../../app.json";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -77,6 +78,9 @@ function Overview(props: any) {
                         <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
                     </StyledView>
                 </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`justify-center items-center my-2`}>
+                <StyledText className={`text-white`}>App Version: {expo.version} ❤️</StyledText>
             </StyledView>
         </StyledScrollView>
     );
