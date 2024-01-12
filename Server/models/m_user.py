@@ -46,23 +46,29 @@ class Country(Base):
     country = Column(String(255), nullable=False)
     last_modified = Column(TIMESTAMP, nullable=False)
 
+#TODO New table for application tokens (application_id, user_id or security_id, refresh_token, last_modified) 1 to n relationship betweem user_security and application_tokens
 class UserSecurity(Base):
     __tablename__ = "users_security"
-
     security_id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.user_id"), nullable=False)
     password = Column(String(255), nullable=False)
-    _2fa = Column(String(255))
+    
     forgot_password = Column(String(255))
-    application_tokens = Column(MutableDict.as_mutable(JSON), default={}) #* Use MutableDict to allow changes to the dictionary
+
+    # ~~~~~~~~~~~~~~~~~ Tokens ~~~~~~~~~~~~~~~~ #
+    application_tokens = Column(MutableDict.as_mutable(JSON), default={}) #* Use MutableDict to allow changes to the dictionary 
     temporary_tokens = Column(TEXT(350))
     active_access_tokens = Column(TEXT(3525)) #* Max 75 access tokens
+
+    # ~~~~~~~~~~~~~~~~ Security ~~~~~~~~~~~~~~~ #
     secutity_warns = Column(Integer, default=0) #* Number of times suspicious activity has been detected max. 10
     locked = Column(Boolean, default=False)
+
+    # ~~~~~~~~~~~~~~ Verification ~~~~~~~~~~~~~ #
     verified = Column(Boolean, default=False)
+    _2fa = Column(String(255))
     _2fa_backup = Column(String(255))
     last_modified = Column(TIMESTAMP, nullable=False)
-    
 
 class ShoppingCart(Base):
     __tablename__ = "shopping_carts"
