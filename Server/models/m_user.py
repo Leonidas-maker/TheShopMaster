@@ -95,4 +95,3 @@ class Product(Base): #! Need to be changed (shipped to other database stucture)
     description = Column(String(255), nullable=False)
     price = Column(Integer, nullable=False)
     last_modified = Column(TIMESTAMP, nullable=False)
-
