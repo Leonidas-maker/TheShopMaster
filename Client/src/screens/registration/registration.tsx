@@ -10,7 +10,7 @@ const StyledView = styled(View);
 const StyledTextInput = styled(TextInput);
 const StyledTouchableHighlight = styled(TouchableHighlight);
 
-//TODO: Make own component for text input
+//TODO: Make own component for text input with functions
 //!: Not final design - just for testing the registration function
 //?: Not quite sure where the error from the navigation comes from but it works
 function Registration() {
