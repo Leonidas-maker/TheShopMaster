@@ -134,6 +134,7 @@ function Scanner() {
                     }
                 })()
             }
+            
         </StyledView>
     );
 }
