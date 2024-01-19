@@ -5,6 +5,8 @@ from cryptography.hazmat.primitives.serialization import (
     load_pem_public_key,
 )
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 import asyncio
 
 # import pyotp
@@ -26,45 +28,110 @@ from models import s_user, m_user
 ###########################################################################
 
 # ======================================================== #
+# ======================= Gen Keys ======================= #
+# ======================================================== #
+
+
+def generate_ecdsa_keys(curve: ec.EllipticCurve):
+    # ~~~~~~~~~~~~~~ Access Token ~~~~~~~~~~~~~ #
+    # Generate the private key
+    private_key = ec.generate_private_key(curve)
+
+    # Get the public key from the private key
+    public_key = private_key.public_key()
+
+    # Convert the keys to PEM format
+    pem_private_key = private_key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.PKCS8,
+        encryption_algorithm=serialization.NoEncryption(),
+    )
+    pem_public_key = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo,
+    )
+
+    return pem_private_key, pem_public_key
+
+
+def save_key(key: bytes, file_name: str, folder_path: Path):
+    with (folder_path / file_name).open("wb") as key_file:
+        key_file.write(key)
+
+
+def load_key(
+    file_name: str,
+    key_password: bytes = None,
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
+):
+    if "private" in file_name:
+        with (folder_path / file_name).open("rb") as key_file:
+            key = load_pem_private_key(
+                key_file.read(), password=key_password, backend=default_backend()
+            )
+    elif "public" in file_name:
+        with (folder_path / file_name).open("rb") as key_file:
+            key = load_pem_public_key(key_file.read(), backend=default_backend())
+    else:
+        raise ValueError("Invalid file_name")
+    return key
+
+
+def generate_keys(folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys"):
+    access_private_key, access_public_key = generate_ecdsa_keys(ec.SECP256R1())
+    refresh_private_key, refresh_public_key = generate_ecdsa_keys(ec.SECP521R1())
+    save_key(access_private_key, "access_private_key.pem", folder_path)
+    save_key(access_public_key, "access_public_key.pem", folder_path)
+    save_key(refresh_private_key, "refresh_private_key.pem", folder_path)
+    save_key(refresh_public_key, "refresh_public_key.pem", folder_path)
+
+
+# ======================================================== #
 # ======================= Get Keys ======================= #
 # ======================================================== #
 
+
 # ~~~~~~~~~~~~~~ Private Keys ~~~~~~~~~~~~~ #
 def get_tokens_private(
-    folder_path: str = str(Path(__file__).parent.absolute() / "jwt_keys"),
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
 ):
+    if (
+        not (folder_path / "refresh_private_key.pem").exists()
+        and not (folder_path / "access_private_key.pem").exists()
+    ):
+        generate_keys()
     # Get the refresh private key
-    with open(str(Path(folder_path) / "refresh_private_key.pem"), "rb") as key_file:
-        refresh_private_key = load_pem_private_key(
-            key_file.read(), password=None, backend=default_backend()
-        )
+    refresh_private_key = load_key("refresh_private_key.pem")
 
     # Get the access private key
-    with open(str(Path(folder_path) / "access_private_key.pem"), "rb") as key_file:
-        access_private_key = load_pem_private_key(
-            key_file.read(), password=None, backend=default_backend()
-        )
+    access_private_key = load_key("access_private_key.pem")
 
     return refresh_private_key, access_private_key
 
 
 # ~~~~~~~~~~~~~~ Public Keys ~~~~~~~~~~~~~ #
 def get_refresh_token_public(
-    folder_path: str = str(Path(__file__).parent.absolute() / "jwt_keys"),
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
 ):
+    folder_path = Path(folder_path)
+    if not (folder_path / "refresh_public_key.pem").exists():
+        generate_keys()
+
     # Get the refresh public key
-    with open(str(Path(folder_path) / "refresh_public_key.pem"), "rb") as key_file:
-        public_key = load_pem_public_key(key_file.read(), backend=default_backend())
+    public_key = load_key("refresh_public_key.pem")
 
     return public_key
 
 
 def get_access_token_public(
-    folder_path: str = str(Path(__file__).parent.absolute() / "jwt_keys"),
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
 ):
+    folder_path = Path(folder_path)
+    if not (folder_path / "access_public_key.pem").exists():
+        generate_keys()
+
     # Get the access public key
-    with open(str(Path(folder_path) / "access_public_key.pem"), "rb") as key_file:
-        public_key = load_pem_public_key(key_file.read(), backend=default_backend())
+    public_key = load_key("access_public_key.pem")
 
     return public_key
 
@@ -72,6 +139,7 @@ def get_access_token_public(
 # ======================================================== #
 # ======================== Verify ======================== #
 # ======================================================== #
+
 
 # ~~~~~~~~~~~~~~ Refresh Token ~~~~~~~~~~~~~ #
 def verify_refresh_token(token: str):
@@ -85,7 +153,8 @@ def verify_refresh_token(token: str):
     except jwt.InvalidTokenError:
         return False
 
-def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str): 
+
+def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str):
     if application_id and application_id != "webapplication":
         application_tokens = user_security.application_tokens
         if application_tokens[application_id] == jti:
@@ -99,6 +168,7 @@ def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str)
         else:
             return False
 
+
 # ~~~~~~~~~~~~~~ Access Token ~~~~~~~~~~~~~ #
 def verify_access_token(token: str):
     public_key = get_access_token_public()
@@ -110,6 +180,7 @@ def verify_access_token(token: str):
         return False
     except jwt.InvalidTokenError:
         return False
+
 
 def get_token_payload(token: str):
     payload = jwt.decode(token, options={"verify_signature": False})
@@ -134,7 +205,7 @@ def create_tokens(
             continue
     else:
         raise HTTPException(status_code=500, detail="Internal Server Error")
-    
+
     # Check if the user is locked
     if user_security.secutity_warns >= MAX_WARNS:
         raise HTTPException(status_code=403, detail="Account temporarily locked")
@@ -142,8 +213,10 @@ def create_tokens(
     current_timestamp = unix_timestamp()
 
     # Remove expired tokens
-    application_tokens, temp_tokens, active_access_tokens = remove_old_tokens(user_security, current_timestamp)
-    
+    application_tokens, temp_tokens, active_access_tokens = remove_old_tokens(
+        user_security, current_timestamp
+    )
+
     if len(active_access_tokens) >= MAX_ACTIVE_ACCESS_TOKENS:
         raise_security_warns(db, user_security, "Too many access tokens active")
 
@@ -151,7 +224,7 @@ def create_tokens(
         raise HTTPException(
             status_code=403, detail="Too many active temporary instances"
         )
-    
+
     if check_jti_timestamp(old_jti):
         if not check_jti(user_security, application_id, old_jti):
             raise_security_warns(db, user_security, "Invalid jti")
@@ -175,7 +248,9 @@ def create_tokens(
         }
 
         # Add the jti and application_id to the user_security
-        application_tokens[application_id] = create_jti_timestamp(refresh_jti, token_exp)
+        application_tokens[application_id] = create_jti_timestamp(
+            refresh_jti, token_exp
+        )
     else:
         token_exp = unix_timestamp(minutes=15)  #! More then 15 minutes?
         payload = {
@@ -194,7 +269,6 @@ def create_tokens(
 
         # Add the jti to the user_security
         temp_tokens.append(create_jti_timestamp(refresh_jti, token_exp))
-       
 
     reftesh_token = jwt.encode(payload, refresh_private_key, algorithm="ES512")
 
@@ -211,7 +285,7 @@ def create_tokens(
     }
 
     active_access_tokens.append(create_jti_timestamp(access_jti, token_exp))
-    
+
     access_token = jwt.encode(payload, access_private_key, algorithm="ES256")
 
     # Update the user_security
@@ -226,6 +300,7 @@ def create_tokens(
 # ======================================================== #
 # ==================== Tokens-Revocation ================= #
 # ======================================================== #
+
 
 # ~~~~~~~~~~~~~~ Single Token ~~~~~~~~~~~~~ #
 def revoke_application_token(user: s_user.User, application_id: str, db: Session):
@@ -258,7 +333,8 @@ def revoke_all_application_tokens(user: s_user.User, db: Session):
 ###########################################################################
 ################################### OTP ###################################
 ###########################################################################
-    
+
+
 def verify_otp(user: s_user.User, otp: str):
     pass
 
@@ -303,23 +379,27 @@ def unix_timestamp(
 def create_jti_timestamp(jti: str, timestamp: int):
     return f"{jti}:{timestamp}"
 
+
 def check_jti_timestamp(jti_timestamp: str):
     try:
         jti_timestamp.split(":")
         return True
     except:
         return False
-    
+
+
 def verify_jti_timestamp(jti_timestamp: str, current_timestamp: int = unix_timestamp()):
     _, timestamp = jti_timestamp.split(":")
     if int(timestamp) < current_timestamp:
         return False
     else:
         return True
-    
 
-def remove_old_tokens(user_security: m_user.UserSecurity, current_timestamp: int = unix_timestamp()):
-    if user_security.application_tokens: #* Shouldn't be NULL but just in case
+
+def remove_old_tokens(
+    user_security: m_user.UserSecurity, current_timestamp: int = unix_timestamp()
+):
+    if user_security.application_tokens:  # * Shouldn't be NULL but just in case
         # Remove expired application tokens
         application_tokens = user_security.application_tokens
         for key, value in application_tokens.items():
@@ -348,9 +428,13 @@ def remove_old_tokens(user_security: m_user.UserSecurity, current_timestamp: int
 
     return application_tokens, temp_tokens, active_access_tokens
 
+
 def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error: str):
     security_warns = user_security.secutity_warns + 1
     user_security.secutity_warns = security_warns
     user_security.verified = False
     db.commit()
-    raise HTTPException(status_code=403, detail=f"{error}! Warns:{security_warns}/{MAX_WARNS} until Account is locked")
+    raise HTTPException(
+        status_code=403,
+        detail=f"{error}! Warns:{security_warns}/{MAX_WARNS} until Account is locked",
+    )
