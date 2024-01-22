@@ -1,4 +1,3 @@
-from fastapi import HTTPException
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from pydantic import EmailStr, BaseModel
 from typing import Dict, Any
@@ -22,13 +21,13 @@ def init_mailer(mail_from_name: str, ssl: bool = False):
         MAIL_USERNAME=config["EMAIL"]["username"],
         MAIL_PASSWORD=config["EMAIL"]["password"],
         MAIL_PORT=int(config["EMAIL"]["port"]),
-        MAIL_SERVER=config["EMAIL"]["server"],
+        MAIL_SERVER=config["EMAIL"]["host"],
         MAIL_FROM=config["EMAIL"]["username"],
         MAIL_FROM_NAME=mail_from_name,
-        MAIL_STARTTLS=True,
-        MAIL_SSL_TLS=False,
+        MAIL_STARTTLS=False,
+        MAIL_SSL_TLS=True,
         USE_CREDENTIALS=True,
-        VALIDATE_CERTS=True,
+        VALIDATE_CERTS=False,
         TEMPLATE_FOLDER=email_template_path,
     )
     return FastMail(conf)

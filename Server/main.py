@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi_cdn_host import monkey_patch_for_docs_ui 
 
 from models import m_user
-from database import engine
+from config.database import engine
 from routes import user, auth
 from data.email import send_with_template, EmailSchema
 
@@ -14,7 +14,7 @@ monkey_patch_for_docs_ui(app)
 async def root():
     await send_with_template(
         EmailSchema(
-            email="schuetzeandreas.1@web.de",
+            email="test-4b705022@appmaildev.com",
             body={"verify_code": "46454"},
             type="verify-first"
         )

@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from typing import List
 from sqlalchemy.orm import Session
 from cryptography.hazmat.primitives.serialization import (
     load_pem_private_key,
@@ -7,21 +8,19 @@ from cryptography.hazmat.primitives.serialization import (
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import ec
-import asyncio
 
-# import pyotp
+import pyotp
+import secrets
 import bcrypt
 import jwt
 from datetime import datetime, timezone, timedelta
 import uuid
 
 from pathlib import Path
-import sys
-
-sys.path.append(str(Path(__file__).parent.parent.absolute()))
 
 from config.security import *
 from models import s_user, m_user
+from middleware.user import get_user_security, get_user_2fa
 
 ###########################################################################
 ################################## TOKENS #################################
@@ -52,6 +51,11 @@ def generate_ecdsa_keys(curve: ec.EllipticCurve):
     )
 
     return pem_private_key, pem_public_key
+
+
+# ======================================================== #
+# ================== Key File Operations ================= #
+# ======================================================== #
 
 
 def save_key(key: bytes, file_name: str, folder_path: Path):
@@ -94,7 +98,7 @@ def generate_keys(folder_path: Path = Path(__file__).parent.absolute() / "jwt_ke
 # ~~~~~~~~~~~~~~ Private Keys ~~~~~~~~~~~~~ #
 def get_tokens_private(
     folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
-):
+) -> (ec.EllipticCurvePrivateKey, ec.EllipticCurvePrivateKey):
     if (
         not (folder_path / "refresh_private_key.pem").exists()
         and not (folder_path / "access_private_key.pem").exists()
@@ -112,7 +116,7 @@ def get_tokens_private(
 # ~~~~~~~~~~~~~~ Public Keys ~~~~~~~~~~~~~ #
 def get_refresh_token_public(
     folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
-):
+) -> ec.EllipticCurvePublicKey:
     folder_path = Path(folder_path)
     if not (folder_path / "refresh_public_key.pem").exists():
         generate_keys()
@@ -125,7 +129,7 @@ def get_refresh_token_public(
 
 def get_access_token_public(
     folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
-):
+) -> ec.EllipticCurvePublicKey:
     folder_path = Path(folder_path)
     if not (folder_path / "access_public_key.pem").exists():
         generate_keys()
@@ -154,7 +158,9 @@ def verify_refresh_token(token: str):
         return False
 
 
-def check_jti(user_security: s_user.UserSecurity, application_id: str, jti: str):
+def check_jti(
+    user_security: s_user.UserSecurity, application_id: str, jti: str
+) -> bool:  # TODO Change to new table
     if application_id and application_id != "webapplication":
         application_tokens = user_security.application_tokens
         if application_tokens[application_id] == jti:
@@ -191,43 +197,31 @@ def get_token_payload(token: str):
 # ==================== Tokens-Rotation =================== #
 # ======================================================== #
 def create_tokens(
-    db: Session, user_id: str, old_jti: str = None, application_id: str = None
-):
-    # Get the user_security try 3 times
-    for _ in range(3):
-        try:
-            user_security = (
-                db.query(m_user.UserSecurity).filter_by(user_id=user_id).first()
-            )
-            break
-        except:
-            asyncio.sleep(0.25)
-            continue
-    else:
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+    db: Session,
+    user_security: m_user.UserSecurity,
+    user_uuid: str, # TODO Maybe use relationship between user_security and user_uuid
+    old_jti: str = None,
+    application_id: str = None,
+) -> (str, str):
+    user_id = user_security.user_id
 
     # Check if the user is locked
-    if user_security.secutity_warns >= MAX_WARNS:
-        raise HTTPException(status_code=403, detail="Account temporarily locked")
+    check_security_warns(user_security)
 
     current_timestamp = unix_timestamp()
 
     # Remove expired tokens
-    application_tokens, temp_tokens, active_access_tokens = remove_old_tokens(
-        user_security, current_timestamp
+    _, temporary_tokens, active_access_tokens = remove_old_tokens(
+        db, user_security, current_timestamp, old_jti
     )
 
     if len(active_access_tokens) >= MAX_ACTIVE_ACCESS_TOKENS:
         raise_security_warns(db, user_security, "Too many access tokens active")
 
-    if len(temp_tokens) >= MAX_WEB_REFRESH_TOKENS:
-        raise HTTPException(
-            status_code=403, detail="Too many active temporary instances"
-        )
+    if len(temporary_tokens) >= MAX_WEB_REFRESH_TOKENS:
+        raise HTTPException(status_code=403, detail="Too many active temporary instances")
 
-    if check_jti_timestamp(old_jti):
-        if not check_jti(user_security, application_id, old_jti):
-            raise_security_warns(db, user_security, "Invalid jti")
+    # TODO Check old jti if it is still valid
 
     # Get the private keys and create the jti
     refresh_private_key, access_private_key = get_tokens_private()
@@ -239,7 +233,7 @@ def create_tokens(
         token_exp = unix_timestamp(days=30)
         payload = {
             "iss": "https://api.theshopmaster.com",  #! Change this to the domain of the api
-            "sub": user_id,
+            "sub": user_uuid,
             "aud": application_id,
             "exp": token_exp,
             "nbf": current_timestamp,
@@ -248,35 +242,43 @@ def create_tokens(
         }
 
         # Add the jti and application_id to the user_security
-        application_tokens[application_id] = create_jti_timestamp(
-            refresh_jti, token_exp
+        new_reftesh_token = m_user.UserTokens(
+            user_id=user_id,
+            token_type="Application",
+            token_jti=refresh_jti,
+            token_value=application_id,
+            creation_time=current_timestamp,
+            expiration_time=token_exp,
         )
     else:
         token_exp = unix_timestamp(minutes=15)  #! More then 15 minutes?
         payload = {
             "iss": "https://api.theshopmaster.com",  #! Change this to the domain of the api
-            "sub": user_id,
+            "sub": user_uuid,
             "aud": "webapplication",
             "exp": token_exp,
             "nbf": current_timestamp,
             "iat": current_timestamp,
             "jti": refresh_jti,
         }
-
-        # Remove the old jti from the user_security
-        if old_jti:
-            temp_tokens.remove(old_jti)
-
-        # Add the jti to the user_security
-        temp_tokens.append(create_jti_timestamp(refresh_jti, token_exp))
+        new_reftesh_token = m_user.UserTokens(
+            user_id=user_id,
+            token_type="Temporary",
+            token_jti=refresh_jti,
+            token_value="webapplication",
+            creation_time=current_timestamp,
+            expiration_time=token_exp,
+        )
 
     reftesh_token = jwt.encode(payload, refresh_private_key, algorithm="ES512")
+    db.add(new_reftesh_token)
+    db.flush()
 
     # ~~~~~~~~ Create the access token ~~~~~~~ #
     token_exp = unix_timestamp(minutes=8)
     payload = {
         "iss": "https://api.theshopmaster.com",  #! Change this to the domain of the api
-        "sub": user_id,
+        "sub": user_uuid,
         "aud": application_id if application_id else "webapplication",
         "exp": token_exp,
         "nbf": current_timestamp,
@@ -284,14 +286,17 @@ def create_tokens(
         "jti": access_jti,
     }
 
-    active_access_tokens.append(create_jti_timestamp(access_jti, token_exp))
+    new_access_token = m_user.UserTokens(
+        user_id=user_id,
+        token_type="Access",
+        token_jti=access_jti,
+        token_value=application_id if application_id else "webapplication",
+        creation_time=current_timestamp,
+        expiration_time=token_exp,
+    )
 
     access_token = jwt.encode(payload, access_private_key, algorithm="ES256")
-
-    # Update the user_security
-    user_security.application_tokens = application_tokens
-    user_security.temporary_tokens = ",".join(temp_tokens)
-    user_security.active_access_tokens = ",".join(active_access_tokens)
+    db.add(new_access_token)
     db.commit()
 
     return reftesh_token, access_token
@@ -303,14 +308,13 @@ def create_tokens(
 
 
 # ~~~~~~~~~~~~~~ Single Token ~~~~~~~~~~~~~ #
-def revoke_application_token(user: s_user.User, application_id: str, db: Session):
+def revoke_application_token(user: s_user.User, application_id: str, db: Session) -> bool:
     try:
-        user_security = (
-            db.query(m_user.UserSecurity).filter_by(user_id=user.user_id).first()
-        )
-        application_tokens = user_security.application_tokens
-        del application_tokens[application_id]
-        user_security.application_tokens = application_tokens
+        db.query(m_user.UserTokens).filter(
+            m_user.UserTokens.user_id == user.user_id,
+            m_user.UserTokens.token_value == "Application",
+            m_user.UserTokens.token_value == application_id,
+        ).delete(synchronize_session=False)
         db.commit()
         return True
     except:
@@ -318,12 +322,12 @@ def revoke_application_token(user: s_user.User, application_id: str, db: Session
 
 
 # ~~~~~~~~~~~~~~ All Tokens ~~~~~~~~~~~~~ #
-def revoke_all_application_tokens(user: s_user.User, db: Session):
+def revoke_all_application_tokens(user: s_user.User, db: Session) -> bool:
     try:
-        user_security = (
-            db.query(m_user.UserSecurity).filter_by(user_id=user.user_id).first()
-        )
-        user_security.application_tokens = []
+        db.query(m_user.UserTokens).filter(
+            m_user.UserTokens.user_id == user.user_id,
+            m_user.UserTokens.token_value == "Application",
+        ).delete(synchronize_session=False)
         db.commit()
         return True
     except:
@@ -335,18 +339,85 @@ def revoke_all_application_tokens(user: s_user.User, db: Session):
 ###########################################################################
 
 
-def verify_otp(user: s_user.User, otp: str):
-    pass
+# ======================================================== #
+# ========================= TOTP ========================= #
+# ======================================================== #
+def verify_totp(db: Session, user_id: str, otp: str) -> bool:
+    user_2fa = get_user_2fa(db, user_id)
+    if not user_2fa:
+        return False
+
+    totp_secret = user_2fa._2fa_secret
+    totp = pyotp.TOTP(totp_secret)
+    if totp.verify(otp):
+        user_2fa._2fa_last_used = otp
+        db.commit()
+        return True
+    else:
+        return False
+
+
+def create_totp(db: Session, user_id: str) -> tuple:
+    totp_secret = pyotp.random_hex()
+    backup_codes = []
+    for _ in range(6):
+        backup_codes.append(hex(secrets.randbits(256)).replace("0x", ""))
+    backup_codes = ",".join(backup_codes)
+    user_2fa = m_user.User2FA(
+        user_id=user_id,
+        _2fa_secret=totp_secret,
+        _2fa_backup=backup_codes,
+    )
+    db.add(user_2fa)
+    db.commit()
+    return totp_secret, backup_codes
+
+
+# ======================================================== #
+# ====================== Simple-OTP ====================== #
+# ======================================================== #
+def verify_simple_otp(user_security: m_user.UserSecurity, otp: str) -> bool:
+    otp = otp.strip()
+    verify_otp = user_security.verify_otp
+    if verify_otp:
+        verify_otp = verify_otp.split(":")
+        if verify_otp[0] == otp and int(verify_otp[1]) > unix_timestamp():
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def create_simple_otp(
+    db: Session, user_security: m_user.UserSecurity, expire_time: int = 15
+) -> int:
+    # Create the otp: XXXXXX
+    otp = secrets.randbelow(1000000)
+    # Add the expire time: XXXXXX:XXXXXX and save it to the user_security
+    user_security.verify_otp = f"{otp}:{unix_timestamp(minutes=expire_time)}"
+    db.commit()
+    return otp
 
 
 # ======================================================== #
 # ======================= Password ======================= #
 # ======================================================== #
-def check_password(db: Session, user_id: str, password: str):
-    db_user_security = db.query(m_user.UserSecurity).filter_by(user_id=user_id).first()
-    if bcrypt.checkpw(
-        password.encode("utf-8"), db_user_security.password.encode("utf-8")
-    ):
+def check_password(
+    db: Session,
+    password: str,
+    user_id: str = None,
+    user_security: m_user.UserSecurity = None,
+) -> bool:
+    # TODO Maybe unnecessary
+    if user_id:
+        user_security = get_user_security(db, user_id)
+    elif not user_security:
+        raise ValueError("No user_security provided")
+    # * until here
+
+    # Check if the password is correct
+    if bcrypt.checkpw(password.encode("utf-8"), user_security.password.encode("utf-8")):
         return True
     else:
         return False
@@ -376,60 +447,60 @@ def unix_timestamp(
     return int(out.timestamp())
 
 
-def create_jti_timestamp(jti: str, timestamp: int):
-    return f"{jti}:{timestamp}"
-
-
-def check_jti_timestamp(jti_timestamp: str):
-    try:
-        jti_timestamp.split(":")
-        return True
-    except:
-        return False
-
-
-def verify_jti_timestamp(jti_timestamp: str, current_timestamp: int = unix_timestamp()):
-    _, timestamp = jti_timestamp.split(":")
-    if int(timestamp) < current_timestamp:
-        return False
-    else:
-        return True
-
-
 def remove_old_tokens(
-    user_security: m_user.UserSecurity, current_timestamp: int = unix_timestamp()
-):
-    if user_security.application_tokens:  # * Shouldn't be NULL but just in case
+    db: Session,
+    user_security: m_user.UserSecurity,
+    current_timestamp: int = unix_timestamp(),
+    old_jti: str = None,
+) -> tuple:
+    # Get all tokens
+    tokens: List[m_user.UserTokens] = user_security.user_tokens
+
+    # Split the tokens
+    access_tokens = [token for token in tokens if token.token_type == "Access"]
+    temporary_tokens = [token for token in tokens if token.token_type == "Temporary"]
+    application_tokens = [token for token in tokens if token.token_type == "Application"]
+
+    expired_tokens = []
+
+    if application_tokens:  # * Shouldn't be NULL but just in case
         # Remove expired application tokens
-        application_tokens = user_security.application_tokens
-        for key, value in application_tokens.items():
-            if int(value.split(":")[1]) < current_timestamp:
-                del application_tokens[key]
+        for token in application_tokens:
+            if token.expiration_time < current_timestamp or token.token_jti == old_jti:
+                application_tokens.remove(token)
+                expired_tokens.append(token.token_id)
     else:
-        application_tokens = {}
+        application_tokens = []
 
-    if user_security.temporary_tokens:
+    if temporary_tokens:
         # Remove expired temporary tokens
-        temp_tokens = user_security.temporary_tokens.split(",")
-        for token in temp_tokens:
-            if not verify_jti_timestamp(token, current_timestamp):
-                temp_tokens.remove(token)
+        for token in temporary_tokens:
+            if token.expiration_time < current_timestamp or token.token_jti == old_jti:
+                temporary_tokens.remove(token)
+                expired_tokens.append(token.token_id)
     else:
-        temp_tokens = []
+        temporary_tokens = []
 
-    if user_security.active_access_tokens:
+    if access_tokens:
         # Remove expired active access tokens
-        active_access_tokens = user_security.active_access_tokens.split(",")
-        for token in active_access_tokens:
-            if not verify_jti_timestamp(token, current_timestamp):
-                active_access_tokens.remove(token)
+        for token in access_tokens:
+            if token.expiration_time < current_timestamp:
+                access_tokens.remove(token)
+                expired_tokens.append(token.token_id)
     else:
-        active_access_tokens = []
+        access_tokens = []
 
-    return application_tokens, temp_tokens, active_access_tokens
+    # Remove expired tokens from the database
+    if expired_tokens:
+        db.query(m_user.UserTokens).filter(
+            m_user.UserTokens.user_id == user_security.user_id,
+            m_user.UserTokens.token_id.in_(expired_tokens),
+        ).delete(synchronize_session=False)
+        db.commit()
+    return application_tokens, temporary_tokens, access_tokens
 
 
-def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error: str):
+def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error: str) -> None:
     security_warns = user_security.secutity_warns + 1
     user_security.secutity_warns = security_warns
     user_security.verified = False
@@ -438,3 +509,8 @@ def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error:
         status_code=403,
         detail=f"{error}! Warns:{security_warns}/{MAX_WARNS} until Account is locked",
     )
+
+
+def check_security_warns(user_security: m_user.UserSecurity) -> None:
+    if user_security.secutity_warns >= MAX_WARNS:
+        raise HTTPException(status_code=403, detail="Account locked please try again later")

@@ -27,6 +27,6 @@ SQLALCHEMY_DATABASE_URL = (
     f"mariadb+pymysql://{user}:{password}@{host}/{database}?charset=utf8mb4"
 )
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=ssl_args)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args=ssl_args, pool_recycle=3600) # recycle every hour
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

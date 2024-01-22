@@ -1,16 +1,10 @@
-from fastapi import HTTPException
 import bcrypt
 from sqlalchemy.orm import Session
-
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).parent.parent.absolute()))
 
 from models import m_user, s_user
 
 
-def create_user(db: Session, user: s_user.UserCreate):
+def create_user(db: Session, user: s_user.UserCreate) -> tuple[m_user.User, str]:
     # Check if request.address exists
     if user.address:
         # TODO: Performance improvements
@@ -27,9 +21,7 @@ def create_user(db: Session, user: s_user.UserCreate):
 
         if not new_city:
             # Check if country exists
-            new_country = (
-                db.query(m_user.Country).filter_by(country=user.address.country).first()
-            )
+            new_country = db.query(m_user.Country).filter_by(country=user.address.country).first()
             if not new_country:
                 # Create new country
                 new_country = m_user.Country(country=user.address.country)
@@ -37,9 +29,7 @@ def create_user(db: Session, user: s_user.UserCreate):
                 db.flush()
 
             # Create new city
-            new_city = m_user.City(
-                city=user.address.city, country_id=new_country.country_id
-            )
+            new_city = m_user.City(city=user.address.city, country_id=new_country.country_id)
             db.add(new_city)
             db.flush()
 
@@ -76,17 +66,22 @@ def create_user(db: Session, user: s_user.UserCreate):
     db.add(new_user)
     db.flush()
 
+    new_user_uuid = m_user.UserUUID(
+        user_id=new_user.user_id,
+    )
+    db.add(new_user_uuid)
+    db.flush()
+
     # Create new user_security
     new_user_security = m_user.UserSecurity(
         user_id=new_user.user_id,
-        password=bcrypt.hashpw(
-            user.security.password.encode("utf-8"), bcrypt.gensalt()
-        ),
+        password=bcrypt.hashpw(user.security.password.encode("utf-8"), bcrypt.gensalt()),
     )
 
     db.add(new_user_security)
     db.commit()
-    return new_user
+
+    return new_user, new_user_uuid.user_uuid
 
 
 def update_user(db: Session, user: s_user.User):
