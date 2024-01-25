@@ -224,7 +224,7 @@ class CompleteAdress(BaseModel):
     country: str
 
 
-class TestUser(UserBase):
+class ResGetUser(UserBase):
     user_uuid: UUID4
 
     avatar: Optional[bytes] = None

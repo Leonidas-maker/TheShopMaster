@@ -16,6 +16,8 @@ from controllers.auth import (
     verify_account,
     add_2fa,
     verify_first_2fa,
+    verify_2fa,
+    verify_2fa_backup,
 )
 
 
@@ -40,18 +42,17 @@ def user_register(
     return register(db, user, background_tasks)
 
 
-@auth_router.post("/login", response_model=s_auth.UserTokens)
+@auth_router.post("/login", response_model=s_auth.UserTokens | s_auth.UserSecurityToken)
 def user_login(user_login: s_auth.UserLogin, db: Session = Depends(get_db)):
     return login(db, user_login.ident, user_login.password, user_login.application_id)
 
 
-@auth_router.delete("/logout/{user_uuid}")
+@auth_router.delete("/logout/")
 def user_logout(
     tokens: s_auth.UserTokens,
-    user_uuid: str = Path(...),
     db: Session = Depends(get_db),
 ):
-    return logout(db, user_uuid, tokens.refresh_token, tokens.access_token)
+    return logout(db, tokens.refresh_token, tokens.access_token)
 
 
 @auth_router.post("/forgot-password/{user_uuid}")
@@ -79,27 +80,26 @@ def user_add_2fa(
 ):
     return add_2fa(req, access_token, db)
 
-
-@auth_router.get("/verify-first-2fa/")
-def user_verify_first_2fa(
-    access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
-    return verify_first_2fa(db, access_token)
-
-
 @auth_router.delete("/remove-2fa/{user_uuid}")
 def user_remove_2fa():
     return {"Hello": "World"}
 
+@auth_router.post("/verify-first-2fa/", response_model=s_auth.UserResVerifyFirst2FA)
+def user_verify_first_2fa(otp: s_auth.OTP,
+    access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    return verify_first_2fa(db, access_token, otp.otp_code)
 
-@auth_router.post("/verify-2fa/{user_uuid}")
-def user_verify_2fa():
-    return {"Hello": "World"}
+@auth_router.post("/verify-2fa/")
+def user_verify_2fa(otp: s_auth.OTP,
+    security_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return verify_2fa(db, security_token, otp.otp_code)
 
 
 @auth_router.post("/verify-2fa-backup/{user_uuid}")
-def user_verify_2fa_backup():
-    return {"Hello": "World"}
+def user_verify_2fa_backup(otp: s_auth.BackupOTP,
+    security_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    return verify_2fa_backup(db, security_token, otp)
 
 
 @auth_router.post("/refresh-token", response_model=s_auth.UserTokens)

@@ -118,7 +118,7 @@ class UserTokens(Base):
     creation_time = Column(INT(11), nullable=False)
     expiration_time = Column(INT(11), nullable=False)
 
-    user_security = relationship("UserSecurity", back_populates="user_tokens")
+    user_security = relationship("UserSecurity", back_populates="user_tokens", order_by="UserTokens.creation_time") #* Performance improved by ordering tokens by creation_time
 
 
 class ShoppingCart(Base):

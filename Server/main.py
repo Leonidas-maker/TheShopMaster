@@ -12,13 +12,6 @@ monkey_patch_for_docs_ui(app)
 
 @app.get("/")
 async def root():
-    await send_with_template(
-        EmailSchema(
-            email="test-4b705022@appmaildev.com",
-            body={"verify_code": "46454"},
-            type="verify-first"
-        )
-    )
     return {"message": "Hello World"}
 
 app.include_router(user.users_router, prefix="/user")

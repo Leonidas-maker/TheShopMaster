@@ -4,7 +4,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from models import s_user
 from middleware.database import get_db
-from middleware.auth import verify_access_token
+from middleware.auth import verify_access_token, check_jti
 from middleware.user import get_user, merge_sqlalchemy_objs_to_dict
 
 users_router = APIRouter()
@@ -12,21 +12,22 @@ users_router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-@users_router.get("/me", response_model=s_user.TestUser)
+@users_router.get("/me", response_model=s_user.ResGetUser)
 def read_me(access_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    jwt_payload = verify_access_token(access_token)
+    jwt_payload = verify_access_token(db, access_token)
     if jwt_payload:
         user = get_user(db, user_uuid=jwt_payload["sub"])
 
         merged = merge_sqlalchemy_objs_to_dict(
             user,
             user.user_uuid,
+        )
+        merged["address"] = merge_sqlalchemy_objs_to_dict(
             user.address,
             user.address.city.country,
             user.address.city,
         )
-        merged["address"] = merge_sqlalchemy_objs_to_dict()
-        return s_user.TestUser(**merged)
+        return s_user.ResGetUser(**merged)
     else:
         raise HTTPException(status_code=401, detail="Unauthorized")
 

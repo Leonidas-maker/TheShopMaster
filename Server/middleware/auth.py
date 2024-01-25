@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from typing import List
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 from cryptography.hazmat.primitives.serialization import (
     load_pem_private_key,
@@ -21,6 +22,50 @@ from pathlib import Path
 from config.security import *
 from models import s_user, m_user
 from middleware.user import get_user_security, get_user_2fa
+
+
+###########################################################################
+############################## Security Warns #############################
+###########################################################################
+def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error: str) -> None:
+    security_warns = user_security.secutity_warns + 1
+    user_security.secutity_warns = security_warns
+    user_security.verified = False
+    db.commit()
+    raise HTTPException(
+        status_code=403,
+        detail=f"{error}! Warns:{security_warns}/{MAX_WARNS} until Account is locked",
+    )
+
+
+def check_security_warns(user_security: m_user.UserSecurity) -> None:
+    if user_security.secutity_warns >= MAX_WARNS:
+        raise HTTPException(status_code=403, detail="Account locked please try again later")
+
+
+###########################################################################
+################################## Helper #################################
+###########################################################################
+def unix_timestamp(
+    days: int = 0,
+    seconds: int = 0,
+    microseconds: int = 0,
+    milliseconds: int = 0,
+    minutes: int = 0,
+    hours: int = 0,
+    weeks: int = 0,
+) -> int:
+    out = datetime.now(tz=timezone.utc) + timedelta(
+        days,
+        seconds,
+        microseconds,
+        milliseconds,
+        minutes,
+        hours,
+        weeks,
+    )
+    return int(out.timestamp())
+
 
 ###########################################################################
 ################################## TOKENS #################################
@@ -113,6 +158,17 @@ def get_tokens_private(
     return refresh_private_key, access_private_key
 
 
+def get_security_token_private(
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
+) -> ec.EllipticCurvePrivateKey:
+    if not (folder_path / "security_private_key.pem").exists():
+        security_private_key, security_public_key = generate_ecdsa_keys(ec.SECP256R1())
+        save_key(security_private_key, "security_private_key.pem", folder_path)
+        save_key(security_public_key, "security_public_key.pem", folder_path)
+    security_private_key = load_key("security_private_key.pem")
+    return security_private_key
+
+
 # ~~~~~~~~~~~~~~ Public Keys ~~~~~~~~~~~~~ #
 def get_refresh_token_public(
     folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
@@ -140,17 +196,82 @@ def get_access_token_public(
     return public_key
 
 
+def get_security_token_public(
+    folder_path: Path = Path(__file__).parent.absolute() / "jwt_keys",
+) -> ec.EllipticCurvePublicKey:
+    folder_path = Path(folder_path)
+    if not (folder_path / "security_public_key.pem").exists():
+        generate_keys()
+
+    # Get the access public key
+    public_key = load_key("security_public_key.pem")
+
+    return public_key
+
+
 # ======================================================== #
 # ======================== Verify ======================== #
 # ======================================================== #
 
 
+def check_jti(
+    db: Session,
+    jti: str,
+    user_id: str = None,
+    user_uuid: str = None,
+    user_security: m_user.UserSecurity = None,
+    application_id: str = "webapplication",
+) -> bool:
+    if user_id:
+        token_exists = (
+            db.query(m_user.UserTokens)
+            .filter(
+                m_user.UserTokens.user_id == user_id,
+                m_user.UserTokens.token_jti == jti,
+                m_user.UserTokens.token_value == application_id,
+            )
+            .first()
+            is not None
+        )
+    elif user_uuid:
+        user_uuid = uuid.UUID(user_uuid)
+        token_exists = (
+            db.query(m_user.UserTokens)
+            .join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid)
+            .filter(
+                m_user.UserTokens.token_jti == jti,
+                m_user.UserTokens.token_value == application_id,
+            )
+            .first()
+            is not None
+        )
+    elif user_security:
+        tokens: [m_user.UserTokens] = user_security.user_tokens
+        for token in tokens:
+            if token.token_jti == jti and token.token_value == application_id:
+                token_exists = True
+                break
+        else:
+            token_exists = False
+
+    return token_exists
+
+
 # ~~~~~~~~~~~~~~ Refresh Token ~~~~~~~~~~~~~ #
-def verify_refresh_token(token: str):
+def verify_refresh_token(db: Session, token: str):
     public_key = get_refresh_token_public()
     try:
         options = {"verify_aud": False}  # TODO Change this to True
         payload = jwt.decode(token, public_key, algorithms="ES512", options=options)
+
+        if not check_jti(
+            db=db,
+            jti=payload["jti"],
+            user_uuid=payload["sub"],
+            application_id=payload["aud"],
+        ):
+            return False
+
         return payload
     except jwt.ExpiredSignatureError:
         return False
@@ -158,34 +279,50 @@ def verify_refresh_token(token: str):
         return False
 
 
-def check_jti(
-    user_security: s_user.UserSecurity, application_id: str, jti: str
-) -> bool:  # TODO Change to new table
-    if application_id and application_id != "webapplication":
-        application_tokens = user_security.application_tokens
-        if application_tokens[application_id] == jti:
-            return True
-        else:
-            return False
-    else:
-        temporary_tokens = user_security.temporary_tokens.split(",")
-        if jti in temporary_tokens:
-            return True
-        else:
-            return False
-
-
 # ~~~~~~~~~~~~~~ Access Token ~~~~~~~~~~~~~ #
-def verify_access_token(token: str):
+def verify_access_token(db: Session, token: str):
     public_key = get_access_token_public()
     try:
         options = {"verify_aud": False}  # TODO Change this to True
         payload = jwt.decode(token, public_key, algorithms="ES256", options=options)
+
+        # Check if the jti is valid
+        if not check_jti(
+            db=db,
+            jti=payload["jti"],
+            user_uuid=payload["sub"],
+            application_id=payload["aud"],
+        ):
+            return False
         return payload
     except jwt.ExpiredSignatureError:
         return False
     except jwt.InvalidTokenError:
         return False
+
+
+# ~~~~~~~~~~~~~ Security Token ~~~~~~~~~~~~ #
+def verify_security_token(db: Session, token: str, is_2fa: bool = False):
+    public_key = get_security_token_public()
+    try:
+        reasons = ["login-2fa", "forgot-password"]  # TODO Update this
+        payload = jwt.decode(token, public_key, algorithms="ES256", audience=reasons)
+
+        user_security = get_user_security(db, user_uuid=payload["sub"], with_2fa=is_2fa)
+        # Check if the jti is valid
+        if not check_jti(
+            db=db,
+            jti=payload["jti"],
+            user_security=user_security,
+            application_id=payload["aud"],
+        ):
+            return False, None
+        
+        return payload, user_security
+    except jwt.ExpiredSignatureError:
+        return False, None
+    except jwt.InvalidTokenError:
+        return False, None
 
 
 def get_token_payload(token: str):
@@ -199,7 +336,7 @@ def get_token_payload(token: str):
 def create_tokens(
     db: Session,
     user_security: m_user.UserSecurity,
-    user_uuid: str, # TODO Maybe use relationship between user_security and user_uuid
+    user_uuid: str,  # TODO Maybe use relationship between user_security and user_uuid
     old_jti: str = None,
     application_id: str = None,
 ) -> (str, str):
@@ -220,8 +357,6 @@ def create_tokens(
 
     if len(temporary_tokens) >= MAX_WEB_REFRESH_TOKENS:
         raise HTTPException(status_code=403, detail="Too many active temporary instances")
-
-    # TODO Check old jti if it is still valid
 
     # Get the private keys and create the jti
     refresh_private_key, access_private_key = get_tokens_private()
@@ -302,18 +437,53 @@ def create_tokens(
     return reftesh_token, access_token
 
 
+def create_security_token(
+    db: Session,
+    user_id: str,
+    user_uuid: str,  # TODO Maybe use relationship between user_security and user_uuid
+    reason: str,
+) -> (str, str):
+    new_jti = str(uuid.uuid4())
+    current_timestamp = unix_timestamp()
+    token_exp = unix_timestamp(minutes=5)
+    payload = {
+        "iss": "https://api.theshopmaster.com",  #! Change this to the domain of the api
+        "sub": user_uuid,
+        "aud": reason,
+        "exp": token_exp,
+        "nbf": current_timestamp,
+        "iat": current_timestamp,
+        "jti": new_jti,
+    }
+    new_security_token = m_user.UserTokens(
+        user_id=user_id,
+        token_type="Security",
+        token_jti=new_jti,
+        token_value=reason,
+        creation_time=current_timestamp,
+        expiration_time=token_exp,
+    )
+    security_private_key = get_security_token_private()
+    security_token = jwt.encode(payload, security_private_key, algorithm="ES256")
+    db.add(new_security_token)
+    db.commit()
+
+    return security_token
+
+
 # ======================================================== #
 # ==================== Tokens-Revocation ================= #
 # ======================================================== #
 
 
 # ~~~~~~~~~~~~~~ Single Token ~~~~~~~~~~~~~ #
-def revoke_application_token(user: s_user.User, application_id: str, db: Session) -> bool:
+def revoke_token(db: Session, user_id: str, token_type: str, token_value: str, token_jti: uuid.UUID) -> bool:
     try:
         db.query(m_user.UserTokens).filter(
-            m_user.UserTokens.user_id == user.user_id,
-            m_user.UserTokens.token_value == "Application",
-            m_user.UserTokens.token_value == application_id,
+            m_user.UserTokens.user_id == user_id,
+            m_user.UserTokens.token_type == token_type,
+            m_user.UserTokens.token_value == token_value,
+            m_user.UserTokens.token_jti == token_jti,
         ).delete(synchronize_session=False)
         db.commit()
         return True
@@ -322,17 +492,28 @@ def revoke_application_token(user: s_user.User, application_id: str, db: Session
 
 
 # ~~~~~~~~~~~~~~ All Tokens ~~~~~~~~~~~~~ #
-def revoke_all_application_tokens(user: s_user.User, db: Session) -> bool:
-    try:
-        db.query(m_user.UserTokens).filter(
-            m_user.UserTokens.user_id == user.user_id,
-            m_user.UserTokens.token_value == "Application",
-        ).delete(synchronize_session=False)
-        db.commit()
-        return True
-    except:
-        return False
+def revoke_all_tokens(db: Session, user_id: str, token_type: str = None, token_value: str = None):
+    query = db.query(m_user.UserTokens).filter(m_user.UserTokens.user_id == user_id)
+    
+    if token_type:
+        query = query.filter(m_user.UserTokens.token_type == token_type)
+    elif token_value:
+        query = query.filter(m_user.UserTokens.token_value == token_value)
 
+    query.delete(synchronize_session=False)
+    db.commit()
+
+def revoke_all_application_tokens(db: Session, user: s_user.User):
+    revoke_all_tokens(db, user.user_id, token_type="Application")
+
+def revoke_all_security_tokens(db: Session, user_id: str):
+    revoke_all_tokens(db, user_id, token_type="Security")
+
+def revoke_all_temporary_tokens(db: Session, user_id: str):
+    revoke_all_tokens(db, user_id, token_type="Temporary")
+
+def revoke_all_access_tokens(db: Session, user_id: str):
+    revoke_all_tokens(db, user_id, token_type="Access")
 
 ###########################################################################
 ################################### OTP ###################################
@@ -342,14 +523,15 @@ def revoke_all_application_tokens(user: s_user.User, db: Session) -> bool:
 # ======================================================== #
 # ========================= TOTP ========================= #
 # ======================================================== #
-def verify_totp(db: Session, user_id: str, otp: str) -> bool:
-    user_2fa = get_user_2fa(db, user_id)
+def verify_totp(db: Session, otp: str, user_uuid: str = None, user_2fa: m_user.User2FA = None) -> bool:
+    if user_uuid:
+        user_2fa = get_user_2fa(db, user_uuid=user_uuid)
     if not user_2fa:
         return False
 
     totp_secret = user_2fa._2fa_secret
     totp = pyotp.TOTP(totp_secret)
-    if totp.verify(otp):
+    if  user_2fa._2fa_last_used != otp and totp.verify(otp): #* short-circuit evaluation to prevent efficient timing attacks
         user_2fa._2fa_last_used = otp
         db.commit()
         return True
@@ -357,21 +539,38 @@ def verify_totp(db: Session, user_id: str, otp: str) -> bool:
         return False
 
 
-def create_totp(db: Session, user_id: str) -> tuple:
-    totp_secret = pyotp.random_hex()
-    backup_codes = []
-    for _ in range(6):
-        backup_codes.append(hex(secrets.randbits(256)).replace("0x", ""))
-    backup_codes = ",".join(backup_codes)
+def create_totp(db: Session, user_id: str) -> str:
+    totp_secret = pyotp.random_base32()
+
     user_2fa = m_user.User2FA(
         user_id=user_id,
         _2fa_secret=totp_secret,
-        _2fa_backup=backup_codes,
+        _2fa_backup=None,
     )
     db.add(user_2fa)
     db.commit()
-    return totp_secret, backup_codes
+    return totp_secret
 
+
+def create_backup_codes(db: Session, user_uuid: str) -> List[str]:
+    user_security = get_user_security(db, user_uuid=user_uuid, with_2fa=True)
+    if not user_security._2fa_enabled:
+        user_2fa: m_user.User2FA = user_security.user_2fa
+        backup_codes = []
+        for _ in range(6):
+            tmp_number = secrets.randbelow(1000000)
+            backup_codes.append(f"{tmp_number:06}")
+        user_2fa._2fa_backup = ";".join(backup_codes)
+        user_security._2fa_enabled = True
+        db.commit()
+        return backup_codes
+    else:
+        raise HTTPException(status_code=400, detail="2FA already enabled")
+
+def remove_2fa(db: Session, users_security: m_user.UserSecurity):
+    users_security.user_2fa.delete(synchronize_session=False)
+    users_security._2fa_enabled = False
+    db.commit()
 
 # ======================================================== #
 # ====================== Simple-OTP ====================== #
@@ -423,35 +622,16 @@ def check_password(
         return False
 
 
-# ======================================================== #
-# ======================= Sonstiges ====================== #
-# ======================================================== #
-def unix_timestamp(
-    days: int = 0,
-    seconds: int = 0,
-    microseconds: int = 0,
-    milliseconds: int = 0,
-    minutes: int = 0,
-    hours: int = 0,
-    weeks: int = 0,
-) -> int:
-    out = datetime.now(tz=timezone.utc) + timedelta(
-        days,
-        seconds,
-        microseconds,
-        milliseconds,
-        minutes,
-        hours,
-        weeks,
-    )
-    return int(out.timestamp())
+###########################################################################
+############################## Token Cleaners #############################
+###########################################################################
 
 
 def remove_old_tokens(
     db: Session,
     user_security: m_user.UserSecurity,
     current_timestamp: int = unix_timestamp(),
-    old_jti: str = None,
+    old_jti: str = "",
 ) -> tuple:
     # Get all tokens
     tokens: List[m_user.UserTokens] = user_security.user_tokens
@@ -460,6 +640,7 @@ def remove_old_tokens(
     access_tokens = [token for token in tokens if token.token_type == "Access"]
     temporary_tokens = [token for token in tokens if token.token_type == "Temporary"]
     application_tokens = [token for token in tokens if token.token_type == "Application"]
+    security_tokens = [token for token in tokens if token.token_type == "Security"]
 
     expired_tokens = []
 
@@ -490,6 +671,13 @@ def remove_old_tokens(
     else:
         access_tokens = []
 
+    if security_tokens:
+        # Remove expired active security tokens
+        for token in security_tokens:
+            if token.expiration_time < current_timestamp:
+                security_tokens.remove(token)
+                expired_tokens.append(token.token_id)
+
     # Remove expired tokens from the database
     if expired_tokens:
         db.query(m_user.UserTokens).filter(
@@ -500,17 +688,18 @@ def remove_old_tokens(
     return application_tokens, temporary_tokens, access_tokens
 
 
-def raise_security_warns(db: Session, user_security: m_user.UserSecurity, error: str) -> None:
-    security_warns = user_security.secutity_warns + 1
-    user_security.secutity_warns = security_warns
-    user_security.verified = False
-    db.commit()
-    raise HTTPException(
-        status_code=403,
-        detail=f"{error}! Warns:{security_warns}/{MAX_WARNS} until Account is locked",
-    )
-
-
-def check_security_warns(user_security: m_user.UserSecurity) -> None:
-    if user_security.secutity_warns >= MAX_WARNS:
-        raise HTTPException(status_code=403, detail="Account locked please try again later")
+def remove_older_security_token(
+    db: Session, user_security: m_user.UserSecurity, reason: str, max_tokens: int = 2
+):
+    security_tokens: [m_user.UserTokens] = user_security.user_tokens
+    if len(security_tokens) >= max_tokens:
+        security_tokens = security_tokens[
+            : len(security_tokens) - max_tokens + 1
+        ]  # Remove the oldest token
+        db.query(m_user.UserTokens).filter(
+            m_user.UserTokens.user_id == user_security.user_id,
+            m_user.UserTokens.token_type == "Security",
+            m_user.UserTokens.token_value == reason,
+            m_user.UserTokens.token_jti.in_([token.token_jti for token in security_tokens]),
+        ).delete(synchronize_session=False)
+        db.commit()

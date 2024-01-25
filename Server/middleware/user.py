@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.inspection import inspect
 import uuid
 
@@ -16,21 +16,21 @@ def get_user(
     user_id: int = None,
     username: str = None,
     email: str = None,
+    with_user_uuid: bool = False,
 ):
+    query_options = [joinedload(m_user.User.user_uuid)] if with_user_uuid else []
+    query = db.query(m_user.User).options(*query_options)
+
     if user_uuid:
         if isinstance(user_uuid, str):
             user_uuid = uuid.UUID(user_uuid)
-        return (
-            db.query(m_user.User)
-            .join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid)
-            .first()
-        )
+        return query.join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid).first()
     elif user_id:
-        return db.query(m_user.User).filter(m_user.User.user_id == user_id).first()
+        return query.filter(m_user.User.user_id == user_id).first()
     elif username:
-        return db.query(m_user.User).filter(m_user.User.username == username).first()
+        return query.filter(m_user.User.username == username).first()
     elif email:
-        return db.query(m_user.User).filter(m_user.User.email == email).first()
+        return query.filter(m_user.User.email == email).first()
     else:
         raise HTTPException(status_code=400, detail="Invalid parameters")
 
@@ -40,18 +40,28 @@ def get_users(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_user_security(
-    db: Session, user_uuid: uuid.UUID = None, user_id: str = None
+    db: Session,
+    user_uuid: uuid.UUID = None,
+    user_id: str = None,
+    with_tokens: bool = False,
+    with_2fa: bool = False,
 ) -> m_user.UserSecurity:
+    query_options = []
+    if with_tokens:
+        query_options.append(joinedload(m_user.UserSecurity.user_tokens))
+    if with_2fa:
+        query_options.append(joinedload(m_user.UserSecurity.user_2fa))
+
+    query = db.query(m_user.UserSecurity).options(*query_options)
+
     if user_id:
-        user_security = db.query(m_user.UserSecurity).filter_by(user_id=user_id).first()
+        user_security = query.filter_by(user_id=user_id).first()
+
     else:
         if isinstance(user_uuid, str):
             user_uuid = uuid.UUID(user_uuid)
-        user_security = (
-            db.query(m_user.UserSecurity)
-            .join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid)
-            .first()
-        )
+
+        user_security = query.join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid).first()
 
     if user_security:
         return user_security
@@ -62,16 +72,13 @@ def get_user_security(
 def get_user_tokens(
     db: Session, user_uuid: uuid.UUID = None, user_id: str = None
 ) -> m_user.UserTokens:
+    query = db.query(m_user.UserTokens)
     if user_id:
-        user_tokens = db.query(m_user.UserTokens).filter_by(user_id=user_id).all()
+        user_tokens = query.filter_by(user_id=user_id).all()
     else:
         if isinstance(user_uuid, str):
             user_uuid = uuid.UUID(user_uuid)
-        user_tokens = (
-            db.query(m_user.UserTokens)
-            .join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid)
-            .all()
-        )
+        user_tokens = query.join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid).all()
 
     if user_tokens:
         return user_tokens
@@ -80,16 +87,14 @@ def get_user_tokens(
 
 
 def get_user_2fa(db: Session, user_uuid: uuid.UUID = None, user_id: str = None) -> m_user.User2FA:
+    query = db.query(m_user.User2FA)
     if user_id:
-        user_2fa = db.query(m_user.User2FA).filter_by(user_id=user_id).first()
+        user_2fa = query.filter_by(user_id=user_id).first()
     else:
         if isinstance(user_uuid, str):
             user_uuid = uuid.UUID(user_uuid)
-        user_2fa = (
-            db.query(m_user.User2FA)
-            .join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid)
-            .first()
-        )
+        user_2fa = query.join(m_user.UserUUID, m_user.UserUUID.user_uuid == user_uuid).first()
+
     if user_2fa:
         return user_2fa
     else:
