@@ -34,12 +34,12 @@ function HomeBottomTabs() {
                     screenOptions={{
                         headerShown: true,
                         headerStyle: {
-                            backgroundColor: '#03051A',
+                            backgroundColor: '#171717',
                         },
-                        tabBarStyle: { backgroundColor: '#03051A' },
-                        headerTintColor: '#0C2D48',
-                        tabBarActiveTintColor: '#005B41',
-                        tabBarInactiveTintColor: '#0C2D48'
+                        tabBarStyle: { backgroundColor: '#171717' },
+                        headerTintColor: '#f5f5f5',
+                        tabBarActiveTintColor: '#a3a3a3',
+                        tabBarInactiveTintColor: '#f5f5f5'
                     }}
                 >
                     <Tab.Screen

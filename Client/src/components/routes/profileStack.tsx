@@ -1,6 +1,7 @@
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import { StatusBar } from 'react-native';
 import Settings from '../../screens/settings/settings';
+import ProfileButton from '../buttons/profileButton';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ function ProfileStack() {
                     component={Settings}
                     options={{ headerShown: true, headerBackTitle: "Zurück" }}
                 />
+                <Stack.Screen name="ProfileButton" component={ProfileButton} />
             </Stack.Navigator>
         </>
     );
