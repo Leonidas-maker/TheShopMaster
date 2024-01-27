@@ -100,7 +100,6 @@ function Scanner() {
                                 <BarCodeScanner
                                     onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
                                     barCodeTypes={[BarCodeScanner.Constants.BarCodeType.ean13,
-                                    BarCodeScanner.Constants.BarCodeType.qr,
                                     BarCodeScanner.Constants.BarCodeType.ean8]}
                                     style={StyleSheet.absoluteFillObject}
                                 />

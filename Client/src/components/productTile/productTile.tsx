@@ -32,11 +32,11 @@ function ProductTile({ image = require('../../../public/images/defaultProduct.pn
   const { t } = useTranslation();
 
   return (
-    <StyledView className={`bg-gray-800 h-max flex`}>
+    <StyledView className={`h-max flex`}>
       <ProductPopup visible={isPopupVisible} onClose={() => setPopupVisible(false)} />
       <StyledView className={`items-center`}>
         <StyledTouchableOpacity className={`w-max h-max p-2 relative mb-4`} onPress={() => setPopupVisible(true)}>
-          <StyledView className={`bg-red-800 w-36 aspect-square shadow-md rounded-md justify-center items-center z-10`}>
+          <StyledView className={`bg-blue w-36 aspect-square shadow-md rounded-md justify-center items-center z-10`}>
             <ProductImage imagePath={image} />
           </StyledView>
           {priceType === 'regular' && <ProductPrice prodPrice={price} />}

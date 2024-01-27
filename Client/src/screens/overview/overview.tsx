@@ -11,6 +11,13 @@ import Settings from "../settings/settings";
 import ShoppingList from "../shoppingList/shoppingList";
 import Debug from "../devScreens/debug/debug";
 import { expo } from "../../../app.json";
+import Credits from "../credits/credits";
+import Imprint from "../imprint/imprint";
+import MFA from "../mfa/mfa";
+import ProductInfo from '../productInfo/productInfo';
+import Request from '../request/request';
+import Report from "../report/report";
+import About from "../about/about";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -56,6 +63,14 @@ function Overview(props: any) {
                 </StyledTouchableOpacity>
             </StyledView>
             <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(MFA)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>MFA</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
                 <StyledTouchableOpacity onPress={() => navigation.navigate(Settings)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>
                         <StyledText className={`text-white font-bold text-2xl`}>Settings</StyledText>
@@ -72,9 +87,57 @@ function Overview(props: any) {
                 </StyledTouchableOpacity>
             </StyledView>
             <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(ProductInfo)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Product Info</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(Report)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Report</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(Request)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Request</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(Imprint)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Imprint</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
                 <StyledTouchableOpacity onPress={() => navigation.navigate(Debug)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>
                         <StyledText className={`text-white font-bold text-2xl`}>Debug</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(Credits)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>Credits</StyledText>
+                        <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
+                    </StyledView>
+                </StyledTouchableOpacity>
+            </StyledView>
+            <StyledView className={`bg-black w-full h-20`}>
+                <StyledTouchableOpacity onPress={() => navigation.navigate(About)}>
+                    <StyledView className={`flex-row justify-between items-center h-full px-4`}>
+                        <StyledText className={`text-white font-bold text-2xl`}>About us</StyledText>
                         <StyledText className={`text-white font-bold text-2xl`}>{`>`}</StyledText>
                     </StyledView>
                 </StyledTouchableOpacity>

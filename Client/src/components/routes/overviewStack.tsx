@@ -12,6 +12,9 @@ import ProductInfo from '../../screens/productInfo/productInfo';
 import Imprint from '../../screens/imprint/imprint';
 import Credits from '../../screens/credits/credits';
 import Debug from '../../screens/devScreens/debug/debug';
+import MFA from '../../screens/mfa/mfa';
+import Request from '../../screens/request/request';
+import About from '../../screens/about/about';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +39,9 @@ function OverviewStack() {
                 <Stack.Screen name="ProductInfo" component={ProductInfo} />
                 <Stack.Screen name="Report" component={Report} />
                 <Stack.Screen name="Debug" component={Debug} />
+                <Stack.Screen name="MFA" component={MFA} />
+                <Stack.Screen name="Request" component={Request} />
+                <Stack.Screen name="About" component={About} />
             </Stack.Navigator>
         </>
     );

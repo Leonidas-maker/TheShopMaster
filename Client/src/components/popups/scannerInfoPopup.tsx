@@ -49,11 +49,8 @@ const ScannerInfoPopup: React.FC<ScannerInfoPopupProps> = ({
                             <StyledText>
                                 - EAN-13 wie zum Beispiel: 5901234123457
                             </StyledText>
-                            <StyledText>
-                                - EAN-8 wie zum Beispiel: 20123451
-                            </StyledText>
                             <StyledText className={`mb-4`}>
-                                - QR-Codes
+                                - EAN-8 wie zum Beispiel: 20123451
                             </StyledText>
                             <TouchableHighlight
                                 underlayColor="green"
