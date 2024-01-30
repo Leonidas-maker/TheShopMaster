@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { View, Platform, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { SearchBar } from 'react-native-elements';
+import { styled } from "nativewind";
+
+const StyledView = styled(View);
 
 //TODO: Add logic to search for products in database
 //TODO: Make it possible to dismiss keyboard by clicking outside of searchbar
@@ -24,15 +27,17 @@ function SearchBarShop() {
                 onChangeText={setSearchQuery}
                 value={searchQuery}
                 placeholder="Suchen"
+                containerStyle={{ backgroundColor: '#171717' }}
+                inputContainerStyle={{ backgroundColor: '#313131' }}
             />
         );
     };
 
     return (
         <TouchableWithoutFeedback onPress={dismissKeyboard}>
-            <View>
+            <StyledView>
                 {renderSearchBar()}
-            </View>
+            </StyledView>
         </TouchableWithoutFeedback>
     );
 }

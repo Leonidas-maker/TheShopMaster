@@ -34,22 +34,22 @@ const ScannerInfoPopup: React.FC<ScannerInfoPopupProps> = ({
                 >
                     <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                         <StyledView
-                            className={`m-4 bg-white p-5 rounded-lg shadow-lg max-w-sm w-full`}
+                            className={`m-4 bg-[#313131] p-5 rounded-lg shadow-lg max-w-sm w-full`}
                         >
                             <StyledView className={`justify-center items-center`}>
-                                <StyledText className={`text-xl font-bold`}>
+                                <StyledText className={`text-xl font-bold text-font_primary`}>
                                     Barcode Scanner Info
                                 </StyledText>
                             </StyledView>
-                            <StyledText className="mt-4 mb-4">
+                            <StyledText className="mt-4 mb-4 text-font_primary font-bold">
                                 Der Barcode Scanner kann verwendet werden, 
                                 um Produkte zu scannen, damit man direkt zu den Produktdetails gelangt.
                                 Es können folgende Barcodes gescannt werden:
                             </StyledText>
-                            <StyledText>
+                            <StyledText className={`text-font_primary font-bold`}>
                                 - EAN-13 wie zum Beispiel: 5901234123457
                             </StyledText>
-                            <StyledText className={`mb-4`}>
+                            <StyledText className={`mb-4 text-font_primary font-bold`}>
                                 - EAN-8 wie zum Beispiel: 20123451
                             </StyledText>
                             <TouchableHighlight

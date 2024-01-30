@@ -23,9 +23,9 @@ function Login(props: any) {
 	}
 
     return (
-        <StyledView className={`bg-gray-800 h-screen`}>
+        <StyledView className={`bg-primary h-screen`}>
 			<StyledView className={`w-max items-center mb-5 mt-5`}>
-            	<StyledText className={`text-white font-bold text-4xl`}>Login</StyledText>
+            	<StyledText className={`text-font_primary font-bold text-4xl`}>Login</StyledText>
 			</StyledView>
 			<StyledView className={`mx-10`}>
 				<UsernameInput />

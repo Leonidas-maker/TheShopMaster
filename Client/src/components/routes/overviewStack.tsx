@@ -22,7 +22,13 @@ function OverviewStack() {
     return (
         <>
             <StatusBar barStyle="light-content" />
-            <Stack.Navigator initialRouteName="Overview" >
+            <Stack.Navigator initialRouteName="Overview"
+            screenOptions={{
+                headerStyle: {
+                    backgroundColor: '#171717'
+                },
+                headerTintColor: '#E0E0E2'
+            }} >
                 <Stack.Screen
                     name="Overview"
                     component={Overview}

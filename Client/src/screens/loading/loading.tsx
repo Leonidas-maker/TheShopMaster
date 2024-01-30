@@ -27,9 +27,9 @@ const Loading = (props: any) => {
 	  }, []);
 
 	return (
-		<StyledView className={`flex h-screen items-center justify-center`}>
+		<StyledView className={`flex h-screen items-center justify-center bg-primary`}>
 			<StyledActivityIndicator size="large" />
-			<StyledText className={`text-white font-bold p-5`}>Loading...</StyledText>
+			<StyledText className={`text-font_primary font-bold p-5`}>Loading...</StyledText>
 		</StyledView>
 	);
 };

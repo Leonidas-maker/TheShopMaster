@@ -24,7 +24,7 @@ function InfoButton() {
             }}
         >
             <StyledView>
-                {isPressed ? <ActiveInfoSVG width={30} height={30} fill="#FFFFFF" /> : <InfoSVG width={30} height={30} fill="#FFFFFF" />}
+                {isPressed ? <ActiveInfoSVG width={30} height={30} fill="#E0E0E2" /> : <InfoSVG width={30} height={30} fill="#E0E0E2" />}
             </StyledView>
         </TouchableHighlight>
     );

@@ -29,7 +29,7 @@ function Overview(props: any) {
     const { t } = useTranslation();
 
     return (
-        <StyledScrollView className={`h-screen bg-gray-700`}>
+        <StyledScrollView className={`h-screen bg-primary`}>
             <StyledView className={`bg-black w-full h-20`}>
                 <StyledTouchableOpacity onPress={() => navigation.navigate(Dashboard)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>

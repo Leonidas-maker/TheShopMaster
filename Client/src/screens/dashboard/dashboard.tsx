@@ -15,14 +15,15 @@ function Dashboard() {
 
   //TODO: Add logic to insert products from database
   //TODO: Edit Styling of Web Version (too much tiles in one row)
+  //TODO: Text and Profile Button needs to be own components
   return (
-    <StyledScrollView className={`h-screen bg-neutral-900 relative`}>
+    <StyledScrollView className={`h-screen bg-primary relative`}>
       <ProfileButton />
       <StyledView className={`my-6 mr-16 ml-5`}>
-        <StyledText className={`text-4xl text-neutral-100 font-bold mr-20`}>
+        <StyledText className={`text-4xl text-font_primary font-bold mr-20`}>
           Hello, User
         </StyledText>
-        <StyledText className={`text-2xl text-neutral-200 font-bold`}>
+        <StyledText className={`text-2xl text-font_secondary font-bold`}>
           we have some new products with the best prices for you!
         </StyledText>
       </StyledView>
