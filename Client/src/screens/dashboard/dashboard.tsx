@@ -15,7 +15,6 @@ function Dashboard() {
 
   //TODO: Add logic to insert products from database
   //TODO: Edit Styling of Web Version (too much tiles in one row)
-  //TODO: Text and Profile Button needs to be own components
   return (
     <StyledScrollView className={`h-screen bg-primary relative`}>
       <ProfileButton />

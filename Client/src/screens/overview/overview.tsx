@@ -18,6 +18,7 @@ import ProductInfo from '../productInfo/productInfo';
 import Request from '../request/request';
 import Report from "../report/report";
 import About from "../about/about";
+import GeneralNavigator from "../../components/navigator/generalNavigator";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -30,6 +31,7 @@ function Overview(props: any) {
 
     return (
         <StyledScrollView className={`h-screen bg-primary`}>
+            <GeneralNavigator />
             <StyledView className={`bg-black w-full h-20`}>
                 <StyledTouchableOpacity onPress={() => navigation.navigate(Dashboard)}>
                     <StyledView className={`flex-row justify-between items-center h-full px-4`}>

@@ -15,6 +15,7 @@ import Debug from '../../screens/devScreens/debug/debug';
 import MFA from '../../screens/mfa/mfa';
 import Request from '../../screens/request/request';
 import About from '../../screens/about/about';
+import GeneralNavigator from '../navigator/generalNavigator';
 
 const Stack = createStackNavigator();
 

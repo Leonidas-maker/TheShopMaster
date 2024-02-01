@@ -121,13 +121,13 @@ function Scanner() {
                         );
                     } else if (!isCameraActive && isPopupVisible) {
                         return (
-                            <StyledView className={`h-full item-center justify-center bg-gray-800`} />
+                            <StyledView className={`h-full item-center justify-center bg-primary`} />
                         );
                     } else {
                         //Camera is not active
                         return (
-                            <StyledView className={`h-full item-center justify-center`}>
-                                <StyledText className={`text-2xl`}>Kamera deaktiviert</StyledText>
+                            <StyledView className={`h-full item-center justify-center bg-primary`}>
+                                <StyledText className={`text-font_primary text-2xl`}>Kamera deaktiviert</StyledText>
                             </StyledView>
                         );
                     }

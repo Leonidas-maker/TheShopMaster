@@ -34,7 +34,7 @@ const ScannerInfoPopup: React.FC<ScannerInfoPopupProps> = ({
                 >
                     <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
                         <StyledView
-                            className={`m-4 bg-[#313131] p-5 rounded-lg shadow-lg max-w-sm w-full`}
+                            className={`m-4 bg-secondary p-5 rounded-lg shadow-lg max-w-sm w-full`}
                         >
                             <StyledView className={`justify-center items-center`}>
                                 <StyledText className={`text-xl font-bold text-font_primary`}>
